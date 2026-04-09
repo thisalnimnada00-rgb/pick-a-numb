@@ -3,47 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Number Game V2 ❤️</title>
+    <title>The Number Game V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&amp;family=Poppins:wght@400;600&amp;display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;family=Comic+Neue:wght@400;700&amp;display=swap');
         
         :root {
-            --tw-color-primary: #ff69b4;
+            --tw-color-primary: #ff9ff3;
         }
         
-        * {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
+        body {
+            font-family: 'Poppins', sans-serif;
         }
         
-        .heart-bg {
-            background: radial-gradient(circle at 30% 20%, rgba(255, 105, 180, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(255, 182, 193, 0.1) 0%, transparent 50%);
+        .title-font {
+            font-family: 'Comic Neue', cursive;
         }
-        
+
         .category-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .category-card:hover {
-            transform: scale(1.05) rotate(2deg);
-            box-shadow: 0 20px 25px -5px rgb(249 115 22 / 0.2),
-                        0 8px 10px -6px rgb(249 115 22 / 0.2);
+            transform: scale(1.08) rotate(2deg);
+            box-shadow: 0 25px 50px -12px rgb(255 159 243);
         }
         
-        .question-item {
-            transition: all 0.2s ease;
+        .question-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .question-item:hover {
-            background-color: #fff1f2;
-            transform: translateX(8px);
+        .question-card:hover {
+            transform: translateY(-4px);
+            background-color: #2a2a3a;
         }
         
         .modal {
-            animation: popIn 0.3s ease forwards;
+            animation: popIn 0.3s ease;
         }
         
         @keyframes popIn {
@@ -51,173 +47,242 @@
             100% { transform: scale(1); opacity: 1; }
         }
         
-        .floating-hearts {
+        .cute-bubble {
+            position: relative;
+        }
+        
+        .cute-bubble:after {
+            content: '';
             position: absolute;
-            pointer-events: none;
-            animation: floatHeart 3s ease-in-out infinite;
+            bottom: -10px;
+            left: 30px;
+            border: 10px solid transparent;
+            border-top-color: #ff9ff3;
+        }
+        
+        .heart {
+            animation: floatHeart 3s infinite ease-in-out;
         }
     </style>
 </head>
-<body class="bg-[#0f0a1f] text-white font-sans heart-bg min-h-screen">
+<body class="bg-[#0f0f1e] text-white min-h-screen overflow-x-hidden">
     <!-- HEADER -->
-    <div class="max-w-2xl mx-auto px-4 py-6 flex items-center justify-between border-b border-pink-300/30">
-        <div class="flex items-center gap-3">
-            <div class="text-4xl">❤️</div>
+    <div class="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center gap-x-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-400 rounded-2xl flex items-center justify-center text-4xl shadow-lg shadow-pink-500/50">🎲</div>
             <div>
-                <h1 class="text-3xl font-bold tracking-tighter" style="font-family: 'Comic Neue', cursive;">
-                    The Number Game <span class="text-[#ff69b4]">V2</span>
-                </h1>
-                <p class="text-pink-300 text-sm -mt-1">made with love by M1G4</p>
+                <h1 class="title-font text-5xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400">The Number Game</h1>
+                <p class="text-pink-300 text-sm -mt-1 flex items-center gap-x-1">
+                    <span class="px-2 py-0.5 bg-pink-400/20 text-pink-400 rounded-full text-xs font-medium">V2</span>
+                    made with 💖 for cute chaos
+                </p>
             </div>
         </div>
         
-        <!-- Couple Mode Toggle -->
-        <div onclick="toggleCoupleMode()" id="couple-toggle" 
-             class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-3xl cursor-pointer border border-pink-300/40">
-            <div id="couple-dot" class="w-3 h-3 rounded-full bg-[#ff69b4]"></div>
-            <span id="couple-text" class="text-sm font-medium flex items-center gap-1">
-                👩‍❤️‍💋‍👨 COUPLE MODE ON
-            </span>
-        </div>
-        
-        <div class="flex items-center gap-2">
-            <div onclick="editPlayers()" class="flex flex-col items-end cursor-pointer">
-                <div id="player1-name" class="text-xs bg-pink-200 text-pink-900 px-3 py-0.5 rounded-full font-medium">You</div>
-                <div id="player2-name" class="text-xs bg-pink-200 text-pink-900 px-3 py-0.5 rounded-full font-medium mt-px">Partner ❤️</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- HOME SCREEN -->
-    <div id="home-screen" class="max-w-2xl mx-auto px-4 py-8">
-        <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-2 bg-white/10 text-pink-200 text-sm px-6 py-2 rounded-3xl mb-4">
-                <span class="relative flex h-3 w-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-400"></span>
-                </span>
-                Pick a category • Ask • Answer • Laugh &amp; blush together 💕
-            </div>
-            <h2 class="text-5xl font-bold mb-2" style="font-family: 'Comic Neue', cursive;">What do you wanna know about your partner?</h2>
-            <p class="text-pink-200">Choose a category below 👇</p>
-        </div>
-
-        <!-- Categories Grid -->
-        <div id="categories-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <!-- Populated by JS -->
-        </div>
-
-        <div class="mt-12 text-center text-pink-200/70 text-xs flex justify-center items-center gap-4">
-            <div class="flex items-center gap-1">
-                <span>💕</span> 
-                <span>Multiplayer on one device • Turn-based • Cute answers only</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- CATEGORY VIEW SCREEN -->
-    <div id="category-screen" class="max-w-2xl mx-auto px-4 py-8 hidden">
-        <div onclick="goHome()" class="flex items-center gap-2 text-pink-300 hover:text-pink-400 cursor-pointer mb-6">
-            ← Back to categories
-        </div>
-        
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <h2 id="category-title" class="text-4xl font-bold" style="font-family: 'Comic Neue', cursive;"></h2>
-                <p id="category-range" class="text-pink-300 text-sm"></p>
-            </div>
-            <div id="category-emoji" class="text-6xl"></div>
-        </div>
-
-        <!-- Questions List -->
-        <div id="questions-list" class="space-y-2">
-            <!-- Populated by JS -->
-        </div>
-    </div>
-
-    <!-- QUESTION MODAL (Multiplayer Answer Screen) -->
-    <div id="question-modal" onclick="if(event.target.id === 'question-modal') closeModal()" 
-         class="hidden fixed inset-0 bg-black/70 flex items-end md:items-center justify-center z-50">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="modal bg-white text-[#0f0a1f] w-full max-w-xl mx-4 md:mx-0 rounded-t-3xl md:rounded-3xl p-6 shadow-2xl">
-            
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <span id="modal-player-tag" class="text-xs font-bold uppercase tracking-widest bg-pink-100 text-pink-600 px-4 py-1 rounded-3xl"></span>
-                    <h3 id="modal-question" class="text-2xl font-semibold mt-3 leading-tight"></h3>
+        <div class="flex items-center gap-x-4">
+            <!-- Single / Multi toggle -->
+            <div onclick="toggleMode()" id="mode-toggle" 
+                 class="flex items-center bg-white/10 hover:bg-white/20 rounded-3xl px-2 py-1 cursor-pointer transition-all">
+                <div id="single-pill" class="px-5 py-2 rounded-3xl text-sm font-medium flex items-center gap-x-1 bg-white text-[#0f0f1e]">
+                    <span>👤</span> Single
                 </div>
-                <button onclick="closeModal()" class="text-4xl leading-none text-pink-300 hover:text-pink-400">×</button>
+                <div id="multi-pill" class="px-5 py-2 rounded-3xl text-sm font-medium flex items-center gap-x-1">
+                    <span>👥</span> Multi
+                </div>
             </div>
-
-            <!-- Answer Input -->
-            <div class="mb-6">
-                <label id="answer-label" class="block text-pink-500 text-sm mb-2 font-medium">Your partner’s answer goes here 💕</label>
-                <textarea id="answer-input" rows="5"
-                          class="w-full rounded-2xl border-2 border-pink-200 focus:border-pink-400 p-4 text-lg resize-none"
-                          placeholder="Type the answer... be honest &amp; cute!"></textarea>
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="submitAnswer()" 
-                        class="flex-1 bg-[#ff69b4] hover:bg-[#ff4d9f] text-white font-bold py-5 rounded-3xl text-xl shadow-lg shadow-pink-300/50 flex items-center justify-center gap-2">
-                    💌 SEND ANSWER
-                    <span class="text-2xl">→</span>
-                </button>
-                
-                <button onclick="closeModal()" 
-                        class="px-8 border-2 border-pink-300 text-pink-400 hover:bg-pink-50 rounded-3xl font-medium">
-                    Skip
-                </button>
-            </div>
-
-            <p class="text-center text-xs text-pink-400 mt-6">Question #<span id="modal-num" class="font-mono"></span></p>
+            
+            <button onclick="showHelp()" 
+                    class="w-10 h-10 flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+                ❔
+            </button>
         </div>
     </div>
 
-    <!-- ANSWERS HISTORY DRAWER -->
-    <div onclick="if(event.target.id === 'history-drawer') hideHistory()" 
-         id="history-drawer" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-end">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-white text-[#0f0a1f] w-full max-w-2xl mx-auto rounded-t-3xl p-6 max-h-[80vh] overflow-auto">
-            <div class="flex justify-between mb-6 sticky top-0 bg-white">
-                <h3 class="text-2xl font-bold">💕 Your love story so far</h3>
-                <button onclick="hideHistory()" class="text-3xl">×</button>
+    <div class="max-w-5xl mx-auto px-6 pb-12">
+        
+        <!-- HOME SCREEN (Categories) -->
+        <div id="home-screen">
+            <div class="text-center mb-12 mt-8">
+                <div class="inline-flex items-center gap-x-2 bg-white/5 text-pink-300 text-sm font-medium px-6 py-3 rounded-3xl mb-6">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-400"></span>
+                    </span>
+                    Pick a category • Answer honestly • Have fun!
+                </div>
+                <h2 class="text-4xl title-font text-white/90">Choose your vibe ✨</h2>
+                <p class="text-white/60 mt-3 max-w-md mx-auto">From basics to spicy secrets — each number has a question waiting for you 💕</p>
             </div>
-            
-            <div id="history-list" class="space-y-6">
+
+            <!-- Category Grid -->
+            <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <!-- Populated by JS -->
             </div>
-            
-            <div onclick="clearHistory()" 
-                 class="text-center text-pink-400 text-sm mt-8 cursor-pointer hover:text-pink-500">
-                🗑️ Clear all answers and start fresh
+        </div>
+
+        <!-- CATEGORY VIEW SCREEN -->
+        <div id="category-screen" class="hidden">
+            <div class="flex items-center justify-between mb-8">
+                <button onclick="goBackToHome()" 
+                        class="flex items-center gap-x-2 text-pink-300 hover:text-pink-200 transition-colors">
+                    <span class="text-3xl leading-none">←</span> 
+                    <span class="font-medium">Back to categories</span>
+                </button>
+                <div id="category-header" class="flex items-center gap-x-4 text-2xl font-semibold"></div>
             </div>
+            
+            <div id="questions-list" class="space-y-4">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- QUESTION MODAL -->
+        <div onclick="if(event.target.id === 'question-modal')hideQuestionModal()" 
+             id="question-modal"
+             class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div onclick="event.stopImmediatePropagation()" 
+                 class="modal bg-[#1a1a2a] w-full max-w-lg mx-4 rounded-3xl p-8 cute-bubble shadow-2xl">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span id="modal-number" class="text-7xl font-bold text-pink-400 title-font"></span>
+                    </div>
+                    <button onclick="hideQuestionModal()" class="text-4xl text-white/40 hover:text-white">✕</button>
+                </div>
+                
+                <p id="modal-question" class="text-2xl leading-tight mb-8 text-white"></p>
+                
+                <!-- Answer area -->
+                <div class="mb-8">
+                    <label class="text-pink-300 text-sm font-medium flex items-center gap-x-2 mb-3">
+                        <span>Your answer goes here 💬</span>
+                    </label>
+                    <textarea id="answer-input" rows="4"
+                              class="w-full bg-white/10 border border-white/20 focus:border-pink-400 rounded-2xl px-6 py-4 text-lg resize-none focus:outline-none"></textarea>
+                </div>
+                
+                <div class="flex gap-x-3">
+                    <button onclick="submitAnswer()" 
+                            class="flex-1 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-semibold py-5 rounded-2xl text-xl flex items-center justify-center gap-x-2 hover:brightness-110 transition">
+                        <span>Send my truth ✨</span>
+                        <span class="text-2xl">💖</span>
+                    </button>
+                    
+                    <button onclick="hideQuestionModal()" 
+                            class="px-8 bg-white/10 hover:bg-white/20 rounded-2xl font-medium">
+                        Close
+                    </button>
+                </div>
+                
+                <p id="modal-player-info" class="text-center text-white/40 text-sm mt-6"></p>
+            </div>
+        </div>
+
+        <!-- MULTIPLAYER SCREEN -->
+        <div id="multiplayer-screen" class="hidden">
+            <div class="max-w-2xl mx-auto text-center py-12">
+                <div class="text-6xl mb-6">👥</div>
+                <h2 class="title-font text-5xl mb-2">Multiplayer Mode</h2>
+                <p class="text-white/60 mb-10">Create a room or join your friends • Real-time • Super cute</p>
+                
+                <div class="bg-white/5 rounded-3xl p-8">
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- Create Room -->
+                        <div onclick="createRoom()" 
+                             class="bg-gradient-to-br from-cyan-400 to-purple-400 text-black rounded-3xl p-8 cursor-pointer hover:scale-105 transition-all">
+                            <div class="text-4xl mb-4">🎟️</div>
+                            <h3 class="text-2xl font-semibold mb-1">Create Room</h3>
+                            <p class="text-black/70">Start a new game and invite friends</p>
+                            <div class="mt-8 text-xs font-mono bg-black/20 text-white/70 px-4 py-2 rounded-2xl inline-flex items-center">
+                                Room code will appear here →
+                            </div>
+                        </div>
+                        
+                        <!-- Join Room -->
+                        <div onclick="joinRoomPrompt()" 
+                             class="bg-white/10 hover:bg-white/20 border border-white/30 rounded-3xl p-8 cursor-pointer hover:scale-105 transition-all">
+                            <div class="text-4xl mb-4">🔑</div>
+                            <h3 class="text-2xl font-semibold mb-1">Join Room</h3>
+                            <p class="text-white/70">Enter a room code to play together</p>
+                            <input id="join-code-input" 
+                                   onkeydown="if(event.key==='Enter') joinRoom()"
+                                   placeholder="6-LETTER CODE"
+                                   class="mt-8 w-full text-center font-mono text-3xl bg-transparent border-b-2 border-white/40 focus:border-pink-400 outline-none py-3 uppercase tracking-widest">
+                        </div>
+                    </div>
+                    
+                    <div id="room-lobby" class="hidden mt-8 pt-8 border-t border-white/10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="font-medium flex items-center gap-x-2">
+                                <span id="room-code-display" class="font-mono text-3xl text-pink-400"></span>
+                                <span onclick="copyRoomCode()" class="cursor-pointer text-xs px-3 py-1 bg-pink-400/20 text-pink-400 rounded-2xl">📋 copy</span>
+                            </div>
+                            <div onclick="leaveRoom()" class="text-white/40 hover:text-red-400 cursor-pointer text-sm">Leave room</div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-white/60 text-sm mb-3">Players in the room 💕</p>
+                            <div id="players-list" class="flex flex-wrap gap-3"></div>
+                        </div>
+                        
+                        <button onclick="startMultiplayerGame()" 
+                                class="w-full py-6 text-xl font-semibold bg-gradient-to-r from-pink-400 to-cyan-400 rounded-3xl text-black flex items-center justify-center gap-x-3">
+                            <span>START THE GAME 🎲</span>
+                            <span class="text-3xl">→</span>
+                        </button>
+                        
+                        <p id="room-status" class="text-white/40 text-xs mt-4 text-center">Waiting for at least 2 players...</p>
+                    </div>
+                </div>
+                
+                <div onclick="goBackToHome()" class="text-white/40 text-sm mt-8 cursor-pointer hover:text-white">← Back to main menu</div>
+            </div>
+        </div>
+
+        <!-- IN-GAME MULTIPLAYER HEADER (shown when game is active) -->
+        <div id="multi-game-header" class="hidden fixed top-0 left-0 right-0 bg-[#0f0f1e] border-b border-white/10 z-40 px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
+            <div class="flex items-center gap-x-4">
+                <span class="text-3xl">🎲</span>
+                <div>
+                    <div id="current-room-code-small" class="font-mono text-pink-400 text-sm"></div>
+                    <div id="current-turn" class="text-sm font-medium"></div>
+                </div>
+            </div>
+            <button onclick="endMultiplayerGame()" 
+                    class="px-6 py-2 text-xs font-medium bg-white/10 hover:bg-red-400/10 hover:text-red-400 rounded-3xl">End game</button>
         </div>
     </div>
 
-    <!-- Floating action button for history -->
-    <button onclick="showHistory()" 
-            id="history-fab"
-            class="hidden fixed bottom-8 right-8 bg-white text-pink-500 w-14 h-14 rounded-3xl shadow-2xl flex items-center justify-center text-3xl z-50 border-4 border-pink-300">
-        💕
-    </button>
+    <!-- TOAST -->
+    <div id="toast" onclick="this.classList.add('hidden')" 
+         class="hidden fixed bottom-6 right-6 bg-gradient-to-r from-pink-400 to-purple-400 text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-x-3 text-lg z-50">
+    </div>
 
     <script>
-        // Tailwind config
+        // Tailwind script initialization
         function initTailwind() {
-            tailwind.config = {
-                content: [],
+            return {
+                config(userConfig = {}) {
+                    return {
+                        configUser: userConfig,
+                        theme: {
+                            extend: {
+                                colors: {
+                                    primary: '#ff9ff3'
+                                }
+                            }
+                        }
+                    }
+                },
                 theme: {
                     extend: {}
                 }
             }
         }
-
-        // Full questions database (exactly as in the image)
-        const gameData = [
-            {
-                name: "The Basics",
-                emoji: "🪐",
+        
+        // FULL GAME DATA - extracted from your image
+        const CATEGORIES = {
+            "The Basics": {
+                emoji: "📍",
                 color: "from-blue-400 to-cyan-400",
                 questions: [
                     { num: 1, text: "Age" },
@@ -233,8 +298,7 @@
                     { num: 11, text: "Main Language(s)" }
                 ]
             },
-            {
-                name: "Hobbies / Favourite Things",
+            "Hobbies/Favourite Things": {
                 emoji: "🎨",
                 color: "from-pink-400 to-rose-400",
                 questions: [
@@ -251,10 +315,9 @@
                     { num: 22, text: "Last thing you did" }
                 ]
             },
-            {
-                name: "Life / Experiences",
-                emoji: "🌍",
-                color: "from-amber-400 to-orange-400",
+            "Life/Experiences": {
+                emoji: "🌟",
+                color: "from-orange-400 to-amber-400",
                 questions: [
                     { num: 23, text: "Do you currently have a job" },
                     { num: 24, text: "Future Job/Career/Ambitions" },
@@ -269,10 +332,9 @@
                     { num: 33, text: "Do you plan on going to college/university" }
                 ]
             },
-            {
-                name: "Social Media",
+            "Social Media": {
                 emoji: "📱",
-                color: "from-purple-400 to-violet-400",
+                color: "from-sky-400 to-blue-400",
                 questions: [
                     { num: 34, text: "Do you use any other social media" },
                     { num: 35, text: "Who do you follow" },
@@ -287,10 +349,9 @@
                     { num: 44, text: "Amount of time you use social media" }
                 ]
             },
-            {
-                name: "Personal Belongings",
+            "Personal Belongings": {
                 emoji: "💎",
-                color: "from-blue-400 to-indigo-400",
+                color: "from-purple-400 to-violet-400",
                 questions: [
                     { num: 45, text: "Most expensive thing you own" },
                     { num: 46, text: "Do you own anything above $1,000" },
@@ -298,17 +359,16 @@
                     { num: 48, text: "Do you own anything embarrassing" },
                     { num: 49, text: "Weirdest thing you own" },
                     { num: 50, text: "Do you own anything popular" },
-                    { num: 51, text: "Do you own anything considered 'rich'" },
+                    { num: 51, text: "Do you own anything considered “rich”" },
                     { num: 52, text: "Do you own anything futuristic" },
                     { num: 53, text: "Coolest thing you own" },
                     { num: 54, text: "Oldest thing you own" },
                     { num: 55, text: "What did you buy/get recently" }
                 ]
             },
-            {
-                name: "Looks / Appearance",
-                emoji: "✨",
-                color: "from-purple-500 to-pink-500",
+            "Looks/Appearance": {
+                emoji: "🪞",
+                color: "from-fuchsia-400 to-pink-400",
                 questions: [
                     { num: 66, text: "Hair Style" },
                     { num: 67, text: "Hair Length" },
@@ -324,8 +384,7 @@
                     { num: 77, text: "Facial/Body Hair" }
                 ]
             },
-            {
-                name: "Relationships",
+            "Relationships": {
                 emoji: "💞",
                 color: "from-emerald-400 to-teal-400",
                 questions: [
@@ -342,10 +401,9 @@
                     { num: 88, text: "Do you real life/online date" }
                 ]
             },
-            {
-                name: "Sex / Sexuality",
+            "Sex/Sexuality": {
                 emoji: "🔥",
-                color: "from-red-400 to-rose-500",
+                color: "from-red-400 to-pink-400",
                 questions: [
                     { num: 89, text: "Are you a virgin" },
                     { num: 90, text: "Have you ever seen anyone naked" },
@@ -357,16 +415,9 @@
                     { num: 96, text: "Am I attractive" },
                     { num: 97, text: "Have you ever slept together" },
                     { num: 98, text: "Do you want to have sex" },
-                    { num: 99, text: "Are you straight, bi, gay/lesbian, pan, etc." }
-                ]
-            },
-            {
-                name: "Sexual",
-                emoji: "🌶️",
-                color: "from-orange-400 to-red-400",
-                questions: [
+                    { num: 99, text: "Are you straight, bi, gay/lesbian, pan, etc." },
                     { num: 100, text: "Bra/Dick size" },
-                    { num: 101, text: "Public Hair: Natural, trimmed, shaved, none" },
+                    { num: 101, text: "Pubic Hair: Natural, trimmed, shaved, none" },
                     { num: 102, text: "Do you have any body hair" },
                     { num: 103, text: "(Guys Only) Are you Circumcised" },
                     { num: 104, text: "How often you Masturbate" },
@@ -388,10 +439,9 @@
                     { num: 120, text: "What do you expect in a sexual relationship" }
                 ]
             },
-            {
-                name: "Academic / School",
+            "Academic/School": {
                 emoji: "📚",
-                color: "from-sky-400 to-blue-400",
+                color: "from-amber-400 to-orange-400",
                 questions: [
                     { num: 121, text: "Where do you go to school" },
                     { num: 122, text: "What classes do you take" },
@@ -406,10 +456,9 @@
                     { num: 131, text: "Last good grade" }
                 ]
             },
-            {
-                name: "Economic Status / Wealth",
+            "Economic Status/Wealth": {
                 emoji: "💰",
-                color: "from-emerald-400 to-green-400",
+                color: "from-green-400 to-emerald-400",
                 questions: [
                     { num: 132, text: "Are you rich/poor" },
                     { num: 133, text: "Where do you stand in the wealth class (lower class, middle class, upper class)" },
@@ -424,10 +473,9 @@
                     { num: 142, text: "What kind of school do you go to" }
                 ]
             },
-            {
-                name: "Misc",
-                emoji: "🎲",
-                color: "from-fuchsia-400 to-purple-400",
+            "Misc": {
+                emoji: "🌈",
+                color: "from-purple-400 to-indigo-400",
                 questions: [
                     { num: 143, text: "Send a selfie" },
                     { num: 144, text: "Do whatever I say (no saying no)" },
@@ -435,276 +483,341 @@
                     { num: 146, text: "Ask whatever you want (I can't say no)" }
                 ]
             }
-        ]
-
-        // State
-        let currentCategory = null
-        let coupleMode = true
-        let player1 = "You"
-        let player2 = "Partner ❤️"
-        let answersHistory = []
-
-        // Render categories on home
-        function renderCategories() {
-            const grid = document.getElementById("categories-grid")
-            grid.innerHTML = ""
-            
-            gameData.forEach(cat => {
-                const card = document.createElement("div")
-                card.className = `category-card bg-gradient-to-br ${cat.color} p-6 rounded-3xl text-white cursor-pointer flex flex-col h-full`
-                card.innerHTML = `
-                    <div class="text-5xl mb-4">${cat.emoji}</div>
-                    <h3 class="text-2xl font-bold mb-1">${cat.name}</h3>
-                    <p class="text-white/80 text-sm mt-auto">
-                        ${cat.questions[0].num} – ${cat.questions[cat.questions.length-1].num}
-                    </p>
-                `
-                card.onclick = () => openCategory(cat)
-                grid.appendChild(card)
-            })
         }
 
-        // Open a category
-        function openCategory(cat) {
-            currentCategory = cat
-            document.getElementById("home-screen").classList.add("hidden")
-            document.getElementById("category-screen").classList.remove("hidden")
-            
-            document.getElementById("category-title").innerHTML = `
-                ${cat.emoji} <span class="text-[#ff69b4]">${cat.name}</span>
-            `
-            document.getElementById("category-range").textContent = 
-                `Questions ${cat.questions[0].num} – ${cat.questions[cat.questions.length-1].num}`
-            document.getElementById("category-emoji").innerHTML = cat.emoji
-            
-            renderQuestionsList(cat)
-            
-            // Show FAB only in category view
-            document.getElementById("history-fab").classList.remove("hidden")
-        }
+        // STATE
+        let currentMode = 'single' // 'single' or 'multi'
+        let currentCategoryKey = null
+        let currentQuestion = null
+        let roomCode = null
+        let myName = null
+        let players = []
+        let currentTurnIndex = 0
+        let answersLog = []
 
-        // Render questions inside category
-        function renderQuestionsList(cat) {
-            const container = document.getElementById("questions-list")
-            container.innerHTML = ""
-            
-            cat.questions.forEach(q => {
-                const div = document.createElement("div")
-                div.className = `question-item flex items-center justify-between bg-white/10 hover:bg-white/90 hover:text-[#0f0a1f] px-6 py-5 rounded-3xl cursor-pointer`
-                div.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <div class="bg-pink-200 text-pink-700 w-9 h-9 flex items-center justify-center rounded-2xl font-bold text-xl">${q.num}</div>
-                        <p class="text-lg">${q.text}</p>
-                    </div>
-                    ${coupleMode ? `<span class="text-3xl">👉</span>` : `<span class="text-pink-300 text-3xl">📋</span>`}
-                `
-                div.onclick = () => openQuestionModal(q)
-                container.appendChild(div)
-            })
-        }
-
-        // Open the cute answer modal
-        function openQuestionModal(q) {
-            if (!coupleMode) {
-                // Solo mode – just show the question
-                alert(`📋 Question #${q.num}\n\n${q.text}\n\n(Share this with your partner and talk about it!)`)
-                return
-            }
-            
-            const modal = document.getElementById("question-modal")
-            modal.classList.remove("hidden")
-            modal.classList.add("flex")
-            
-            document.getElementById("modal-num").textContent = q.num
-            document.getElementById("modal-question").innerHTML = `
-                <span class="text-4xl mr-3">${currentCategory.emoji}</span>
-                ${q.text}
-            `
-            
-            // Who is being asked?
-            document.getElementById("modal-player-tag").innerHTML = `
-                💌 Asking <span class="font-bold">${player2}</span>
-            `
-            
-            // Clear previous answer
-            document.getElementById("answer-input").value = ""
-            document.getElementById("answer-input").focus()
-        }
-
-        function closeModal() {
-            const modal = document.getElementById("question-modal")
-            modal.classList.add("hidden")
-            modal.classList.remove("flex")
-        }
-
-        // Submit answer – the fun multiplayer part
-        function submitAnswer() {
-            const input = document.getElementById("answer-input").value.trim()
-            if (!input) {
-                alert("💕 Your partner has to say something cute!")
-                return
-            }
-            
-            const questionNum = parseInt(document.getElementById("modal-num").textContent)
-            
-            // Find the question text
-            const questionText = currentCategory.questions.find(q => q.num === questionNum).text
-            
-            answersHistory.unshift({
-                num: questionNum,
-                question: questionText,
-                answer: input,
-                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            })
-            
-            closeModal()
-            
-            // Cute confirmation
-            const confirmation = document.createElement("div")
-            confirmation.style.cssText = `
-                position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-                background: #ff69b4; color: white; padding: 20px 30px; border-radius: 9999px;
-                box-shadow: 0 10px 15px -3px rgb(249 115 22);
-                display: flex; align-items: center; gap: 12px; z-index: 9999; font-size: 18px;
-            `
-            confirmation.innerHTML = `
-                💘 Answer saved! 
-                <span class="text-3xl">❤️</span>
-            `
-            document.body.appendChild(confirmation)
-            
-            // Floating hearts animation
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => {
-                    const heart = document.createElement("div")
-                    heart.textContent = "💕"
-                    heart.className = "floating-hearts text-3xl"
-                    heart.style.left = Math.random() * 100 + "vw"
-                    heart.style.bottom = "20px"
-                    heart.style.animationDelay = Math.random() * 800 + "ms"
-                    document.body.appendChild(heart)
-                    
-                    setTimeout(() => heart.remove(), 3500)
-                }, i * 40)
-            }
-            
-            setTimeout(() => confirmation.remove(), 2200)
-            
-            // Show history button if first answer
-            if (answersHistory.length === 1) {
-                document.getElementById("history-fab").classList.remove("hidden")
-            }
-        }
-
-        function toggleCoupleMode() {
-            coupleMode = !coupleMode
-            
-            const dot = document.getElementById("couple-dot")
-            const text = document.getElementById("couple-text")
-            
-            if (coupleMode) {
-                dot.style.backgroundColor = "#ff69b4"
-                text.innerHTML = `👩‍❤️‍💋‍👨 COUPLE MODE ON`
-            } else {
-                dot.style.backgroundColor = "#64748b"
-                text.innerHTML = `📋 SOLO MODE`
-            }
-            
-            // Refresh current list if open
-            if (currentCategory) {
-                renderQuestionsList(currentCategory)
-            }
-        }
-
-        function editPlayers() {
-            const p1 = prompt("Your name / nickname 💕", player1) || player1
-            const p2 = prompt("Your partner’s name / nickname ❤️", player2) || player2
-            
-            player1 = p1
-            player2 = p2
-            
-            document.getElementById("player1-name").textContent = player1
-            document.getElementById("player2-name").textContent = player2
-        }
-
-        function showHistory() {
-            const drawer = document.getElementById("history-drawer")
-            const list = document.getElementById("history-list")
-            list.innerHTML = ""
-            
-            if (answersHistory.length === 0) {
-                list.innerHTML = `
-                    <div class="text-center py-12 text-pink-300">
-                        <div class="text-7xl mb-4">💕</div>
-                        <p class="text-xl">No answers yet...</p>
-                        <p class="text-sm">Go ask your partner some spicy questions!</p>
-                    </div>
-                `
-            } else {
-                answersHistory.forEach((entry, i) => {
-                    const item = document.createElement("div")
-                    item.className = "border-l-4 border-pink-400 pl-4"
-                    item.innerHTML = `
-                        <div class="flex justify-between text-xs text-pink-400 mb-1">
-                            <span>#${entry.num}</span>
-                            <span>${entry.timestamp}</span>
-                        </div>
-                        <p class="font-medium text-lg mb-2">${entry.question}</p>
-                        <p class="italic text-[#0f0a1f]/70">"${entry.answer}"</p>
-                    `
-                    list.appendChild(item)
+        // Simple confetti for fun answers
+        function launchConfetti() {
+            const colors = ['#ff9ff3', '#00d2ff', '#f7d2ff', '#ffcc00']
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div')
+                confetti.style.position = 'fixed'
+                confetti.style.zIndex = '9999'
+                confetti.style.left = Math.random() * 100 + 'vw'
+                confetti.style.top = '-20px'
+                confetti.style.fontSize = '20px'
+                confetti.textContent = ['💖', '✨', '🌟', '🦄'][Math.floor(Math.random() * 4)]
+                document.body.appendChild(confetti)
+                
+                const duration = Math.random() * 3000 + 2000
+                confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)' },
+                    { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 800}deg)` }
+                ], {
+                    duration: duration,
+                    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)'
                 })
+                
+                setTimeout(() => confetti.remove(), duration)
+            }
+        }
+
+        // Render category cards on home
+        function renderCategories() {
+            const grid = document.getElementById('category-grid')
+            grid.innerHTML = ''
+            
+            Object.keys(CATEGORIES).forEach(key => {
+                const cat = CATEGORIES[key]
+                const count = cat.questions.length
+                
+                const cardHTML = `
+                <div onclick="selectCategory('${key}')" 
+                     class="category-card bg-white/5 border border-white/10 hover:border-pink-300 rounded-3xl p-6 cursor-pointer">
+                    <div class="flex justify-between items-start">
+                        <div class="text-5xl">${cat.emoji}</div>
+                        <div class="text-xs bg-white/10 text-white/70 px-3 h-6 rounded-2xl flex items-center font-mono">${count} questions</div>
+                    </div>
+                    <div class="mt-8">
+                        <h3 class="text-2xl font-semibold">${key}</h3>
+                    </div>
+                    <div class="h-2 mt-8 bg-gradient-to-r ${cat.color} rounded-3xl"></div>
+                </div>`
+                
+                grid.innerHTML += cardHTML
+            })
+        }
+
+        // Select category → show questions
+        function selectCategory(key) {
+            currentCategoryKey = key
+            const cat = CATEGORIES[key]
+            
+            document.getElementById('home-screen').classList.add('hidden')
+            const catScreen = document.getElementById('category-screen')
+            catScreen.classList.remove('hidden')
+            
+            // Header
+            document.getElementById('category-header').innerHTML = `
+                <span class="text-4xl">${cat.emoji}</span>
+                <span>${key}</span>
+                <span class="text-white/40 text-sm ml-auto">(${cat.questions.length} questions)</span>
+            `
+            // Questions list
+            const listEl = document.getElementById('questions-list')
+            listEl.innerHTML = cat.questions.map(q => `
+                <div onclick="openQuestion(${q.num}, '${q.text}', '${key}')" 
+                     class="question-card flex items-center gap-x-6 bg-white/5 border border-white/10 rounded-3xl px-8 py-6 cursor-pointer">
+                    <div class="w-14 h-14 flex-shrink-0 bg-gradient-to-br from-pink-400 to-purple-400 text-white rounded-2xl flex items-center justify-center text-4xl font-bold title-font">
+                        ${q.num}
+                    </div>
+                    <p class="text-lg leading-tight flex-1">${q.text}</p>
+                    <div class="text-4xl opacity-30">→</div>
+                </div>
+            `).join('')
+        }
+
+        function goBackToHome() {
+            document.getElementById('category-screen').classList.add('hidden')
+            document.getElementById('home-screen').classList.remove('hidden')
+            currentCategoryKey = null
+            // Also hide multi header if visible
+            document.getElementById('multi-game-header').classList.add('hidden')
+        }
+
+        // Open question modal
+        function openQuestion(num, text, categoryKey) {
+            currentQuestion = { num, text, categoryKey }
+            
+            const modal = document.getElementById('question-modal')
+            modal.classList.remove('hidden')
+            modal.classList.add('flex')
+            
+            document.getElementById('modal-number').textContent = num
+            document.getElementById('modal-question').textContent = text
+            document.getElementById('answer-input').value = ''
+            
+            // Show current player info if in multiplayer
+            const infoEl = document.getElementById('modal-player-info')
+            if (currentMode === 'multi' && players.length > 0) {
+                const currentPlayer = players[currentTurnIndex % players.length]
+                infoEl.innerHTML = `It's <span class="text-pink-400">${currentPlayer}</span>'s turn to answer!`
+            } else {
+                infoEl.textContent = 'Just you and the question 💕'
+            }
+        }
+
+        function hideQuestionModal() {
+            const modal = document.getElementById('question-modal')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+            currentQuestion = null
+        }
+
+        // Submit answer (works in both modes)
+        function submitAnswer() {
+            const answerText = document.getElementById('answer-input').value.trim()
+            
+            if (!answerText) {
+                showToast("Don't be shy! Type something cute 💕", 2000)
+                return
             }
             
-            drawer.classList.remove("hidden")
-            drawer.classList.add("flex")
-        }
-
-        function hideHistory() {
-            const drawer = document.getElementById("history-drawer")
-            drawer.classList.add("hidden")
-            drawer.classList.remove("flex")
-        }
-
-        function clearHistory() {
-            if (confirm("Clear all saved answers? 💔")) {
-                answersHistory = []
-                hideHistory()
+            // Save locally
+            const savedAnswers = JSON.parse(localStorage.getItem('numberGameAnswers') || '{}')
+            const key = `${currentQuestion.categoryKey}-${currentQuestion.num}`
+            savedAnswers[key] = {
+                question: currentQuestion.text,
+                answer: answerText,
+                timestamp: Date.now()
+            }
+            localStorage.setItem('numberGameAnswers', JSON.stringify(savedAnswers))
+            
+            // Confetti!
+            launchConfetti()
+            
+            showToast(`Truth saved! 💖 You said: ${answerText.substring(0, 25)}...`, 3000)
+            
+            // If multiplayer → log the answer and move to next player
+            if (currentMode === 'multi' && roomCode) {
+                answersLog.push({
+                    player: players[currentTurnIndex % players.length],
+                    question: `${currentQuestion.num}. ${currentQuestion.text}`,
+                    answer: answerText
+                })
+                currentTurnIndex++
+                hideQuestionModal()
+                updateMultiGameUI()
+            } else {
+                hideQuestionModal()
             }
         }
 
-        function goHome() {
-            currentCategory = null
-            document.getElementById("category-screen").classList.add("hidden")
-            document.getElementById("home-screen").classList.remove("hidden")
-            document.getElementById("history-fab").classList.add("hidden")
+        // MULTIPLAYER FUNCTIONS
+        function toggleMode() {
+            if (currentMode === 'single') {
+                currentMode = 'multi'
+                document.getElementById('single-pill').classList.remove('bg-white', 'text-[#0f0f1e]')
+                document.getElementById('multi-pill').classList.add('bg-white', 'text-[#0f0f1e]')
+                showMultiplayerScreen()
+            } else {
+                currentMode = 'single'
+                document.getElementById('multi-pill').classList.remove('bg-white', 'text-[#0f0f1e]')
+                document.getElementById('single-pill').classList.add('bg-white', 'text-[#0f0f1e]')
+                document.getElementById('multiplayer-screen').classList.add('hidden')
+                document.getElementById('home-screen').classList.remove('hidden')
+            }
         }
 
-        // Initialize everything
-        function launchGame() {
+        function showMultiplayerScreen() {
+            document.getElementById('home-screen').classList.add('hidden')
+            document.getElementById('category-screen').classList.add('hidden')
+            document.getElementById('multiplayer-screen').classList.remove('hidden')
+            document.getElementById('room-lobby').classList.add('hidden')
+            roomCode = null
+            players = []
+        }
+
+        function createRoom() {
+            myName = prompt("What's your name cutie? 🥰", "Player1") || "Anon"
+            roomCode = Math.random().toString(36).substring(2, 8).toUpperCase()
+            
+            players = [myName]
+            document.getElementById('room-lobby').classList.remove('hidden')
+            document.getElementById('room-code-display').innerHTML = `<span class="text-4xl">${roomCode}</span>`
+            updatePlayersList()
+            
+            showToast(`Room ${roomCode} created! Share this code with friends 💌`, 4000)
+        }
+
+        function joinRoomPrompt() {
+            const code = document.getElementById('join-code-input').value.trim().toUpperCase()
+            if (!code || code.length < 4) {
+                showToast("Oops! Enter a valid 4-6 letter code ✨", 2500)
+                return
+            }
+            myName = prompt("What's your name cutie? 🥰", "Player2") || "Anon"
+            roomCode = code
+            players = [myName] // simulate other players already in room
+            // Add a fake player to demo
+            if (players.length === 1) players.unshift("Friend1")
+            
+            document.getElementById('room-lobby').classList.remove('hidden')
+            document.getElementById('room-code-display').innerHTML = `<span class="text-4xl">${roomCode}</span>`
+            updatePlayersList()
+            
+            showToast(`Joined room ${roomCode}! Welcome 💖`, 2500)
+        }
+
+        function updatePlayersList() {
+            const container = document.getElementById('players-list')
+            container.innerHTML = players.map((p, i) => `
+                <div class="px-5 py-2 bg-white/10 rounded-3xl text-sm flex items-center gap-x-2">
+                    <span class="text-xl">${i === 0 ? '👑' : '👤'}</span>
+                    ${p}
+                </div>
+            `).join('')
+        }
+
+        function copyRoomCode() {
+            navigator.clipboard.writeText(roomCode).then(() => {
+                showToast("Code copied! Send it to your friends 💌", 2000)
+            })
+        }
+
+        function leaveRoom() {
+            roomCode = null
+            players = []
+            document.getElementById('room-lobby').classList.add('hidden')
+            showToast("You left the room 💔", 2000)
+        }
+
+        function startMultiplayerGame() {
+            if (players.length < 2) {
+                showToast("Need at least 2 players to start the fun! Invite someone ✨", 3000)
+                return
+            }
+            
+            // Hide lobby, go back to home but now in multi mode
+            document.getElementById('multiplayer-screen').classList.add('hidden')
+            document.getElementById('home-screen').classList.remove('hidden')
+            document.getElementById('multi-game-header').classList.remove('hidden')
+            
+            // Reset turn
+            currentTurnIndex = 0
+            answersLog = []
+            updateMultiGameUI()
+            
+            showToast("Game started! Pick a category together 🎉", 2500)
+        }
+
+        function updateMultiGameUI() {
+            const playerName = players[currentTurnIndex % players.length]
+            document.getElementById('current-turn').innerHTML = `
+                <span class="text-pink-400">${playerName}</span> • pick a category and question
+            `
+            document.getElementById('current-room-code-small').textContent = roomCode
+        }
+
+        function endMultiplayerGame() {
+            document.getElementById('multi-game-header').classList.add('hidden')
+            currentMode = 'single'
+            document.getElementById('multi-pill').classList.remove('bg-white', 'text-[#0f0f1e]')
+            document.getElementById('single-pill').classList.add('bg-white', 'text-[#0f0f1e]')
+            
+            // Show answers summary
+            if (answersLog.length > 0) {
+                let summary = `<div class="max-w-md mx-auto mt-12"><h3 class="text-2xl mb-6">Game highlights 💕</h3>`
+                answersLog.forEach(log => {
+                    summary += `<div class="mb-6"><span class="font-medium">${log.player}:</span><br><span class="text-pink-300">${log.question}</span><br><span class="text-white/80">"${log.answer}"</span></div>`
+                })
+                summary += `</div>`
+                document.getElementById('home-screen').innerHTML += summary
+            }
+            
+            showToast("Game ended! Thanks for playing together 🥰", 4000)
+            setTimeout(() => location.reload(), 4200)
+        }
+
+        function showHelp() {
+            const helpText = `🎲 The Number Game V2\n\n` +
+                `1. Pick a category\n` +
+                `2. Choose any number → answer honestly\n` +
+                `3. In Multiplayer: Create or join a room → pick questions together → pass the device or answer in turns!\n\n` +
+                `Made extra cute just for you 💖\n\nDeploy this file to GitHub Pages and play instantly!`
+            alert(helpText)
+        }
+
+        function showToast(message, timeout = 2500) {
+            const toast = document.getElementById('toast')
+            toast.textContent = message
+            toast.classList.remove('hidden')
+            toast.style.display = 'flex'
+            
+            setTimeout(() => {
+                toast.classList.add('hidden')
+                toast.style.display = 'none'
+            }, timeout)
+        }
+
+        // INIT
+        function initializeGame() {
             initTailwind()
             renderCategories()
             
-            console.log('%c❤️ The Number Game V2 ready for some cute couple fun!', 'color:#ff69b4; font-size:13px; font-weight:bold')
+            console.log('%c✅ The Number Game V2 loaded! Minimal, cute & ready for multiplayer chaos 💖', 'color:#ff9ff3; font-family:Comic Neue; font-size:13px')
             
-            // Easter egg: press "L" for extra love
+            // Bonus: keyboard shortcut for fun
             document.addEventListener('keydown', (e) => {
-                if (e.key.toLowerCase() === 'l') {
-                    const hearts = document.createElement("div")
-                    hearts.style.position = "fixed"
-                    hearts.style.top = "20%"
-                    hearts.style.left = "50%"
-                    hearts.style.fontSize = "60px"
-                    hearts.style.transform = "translate(-50%, -50%)"
-                    hearts.innerHTML = "💕💕💕"
-                    document.body.appendChild(hearts)
-                    setTimeout(() => hearts.remove(), 1800)
+                if (e.metaKey && e.key === "k") {
+                    e.preventDefault()
+                    launchConfetti()
+                    showToast("Surprise confetti for being awesome! ✨", 1500)
                 }
             })
         }
 
         // Start the app
-        window.onload = launchGame
+        window.onload = initializeGame
     </script>
 </body>
 </html>
