@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Number Game V2 ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&amp;family=Poppins:wght@400;600&amp;display=swap');
+        
+        :root {
+            --tw-color-primary: #ff69b4;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .heart-bg {
+            background: radial-gradient(circle at 30% 20%, rgba(255, 105, 180, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(255, 182, 193, 0.1) 0%, transparent 50%);
+        }
+        
+        .category-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .category-card:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 20px 25px -5px rgb(249 115 22 / 0.2),
+                        0 8px 10px -6px rgb(249 115 22 / 0.2);
+        }
+        
+        .question-item {
+            transition: all 0.2s ease;
+        }
+        
+        .question-item:hover {
+            background-color: #fff1f2;
+            transform: translateX(8px);
+        }
+        
+        .modal {
+            animation: popIn 0.3s ease forwards;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            pointer-events: none;
+            animation: floatHeart 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-[#0f0a1f] text-white font-sans heart-bg min-h-screen">
+    <!-- HEADER -->
+    <div class="max-w-2xl mx-auto px-4 py-6 flex items-center justify-between border-b border-pink-300/30">
+        <div class="flex items-center gap-3">
+            <div class="text-4xl">❤️</div>
+            <div>
+                <h1 class="text-3xl font-bold tracking-tighter" style="font-family: 'Comic Neue', cursive;">
+                    The Number Game <span class="text-[#ff69b4]">V2</span>
+                </h1>
+                <p class="text-pink-300 text-sm -mt-1">made with love by M1G4</p>
+            </div>
+        </div>
+        
+        <!-- Couple Mode Toggle -->
+        <div onclick="toggleCoupleMode()" id="couple-toggle" 
+             class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-3xl cursor-pointer border border-pink-300/40">
+            <div id="couple-dot" class="w-3 h-3 rounded-full bg-[#ff69b4]"></div>
+            <span id="couple-text" class="text-sm font-medium flex items-center gap-1">
+                👩‍❤️‍💋‍👨 COUPLE MODE ON
+            </span>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <div onclick="editPlayers()" class="flex flex-col items-end cursor-pointer">
+                <div id="player1-name" class="text-xs bg-pink-200 text-pink-900 px-3 py-0.5 rounded-full font-medium">You</div>
+                <div id="player2-name" class="text-xs bg-pink-200 text-pink-900 px-3 py-0.5 rounded-full font-medium mt-px">Partner ❤️</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOME SCREEN -->
+    <div id="home-screen" class="max-w-2xl mx-auto px-4 py-8">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-2 bg-white/10 text-pink-200 text-sm px-6 py-2 rounded-3xl mb-4">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-400"></span>
+                </span>
+                Pick a category • Ask • Answer • Laugh &amp; blush together 💕
+            </div>
+            <h2 class="text-5xl font-bold mb-2" style="font-family: 'Comic Neue', cursive;">What do you wanna know about your partner?</h2>
+            <p class="text-pink-200">Choose a category below 👇</p>
+        </div>
+
+        <!-- Categories Grid -->
+        <div id="categories-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <!-- Populated by JS -->
+        </div>
+
+        <div class="mt-12 text-center text-pink-200/70 text-xs flex justify-center items-center gap-4">
+            <div class="flex items-center gap-1">
+                <span>💕</span> 
+                <span>Multiplayer on one device • Turn-based • Cute answers only</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CATEGORY VIEW SCREEN -->
+    <div id="category-screen" class="max-w-2xl mx-auto px-4 py-8 hidden">
+        <div onclick="goHome()" class="flex items-center gap-2 text-pink-300 hover:text-pink-400 cursor-pointer mb-6">
+            ← Back to categories
+        </div>
+        
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 id="category-title" class="text-4xl font-bold" style="font-family: 'Comic Neue', cursive;"></h2>
+                <p id="category-range" class="text-pink-300 text-sm"></p>
+            </div>
+            <div id="category-emoji" class="text-6xl"></div>
+        </div>
+
+        <!-- Questions List -->
+        <div id="questions-list" class="space-y-2">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <!-- QUESTION MODAL (Multiplayer Answer Screen) -->
+    <div id="question-modal" onclick="if(event.target.id === 'question-modal') closeModal()" 
+         class="hidden fixed inset-0 bg-black/70 flex items-end md:items-center justify-center z-50">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="modal bg-white text-[#0f0a1f] w-full max-w-xl mx-4 md:mx-0 rounded-t-3xl md:rounded-3xl p-6 shadow-2xl">
+            
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <span id="modal-player-tag" class="text-xs font-bold uppercase tracking-widest bg-pink-100 text-pink-600 px-4 py-1 rounded-3xl"></span>
+                    <h3 id="modal-question" class="text-2xl font-semibold mt-3 leading-tight"></h3>
+                </div>
+                <button onclick="closeModal()" class="text-4xl leading-none text-pink-300 hover:text-pink-400">×</button>
+            </div>
+
+            <!-- Answer Input -->
+            <div class="mb-6">
+                <label id="answer-label" class="block text-pink-500 text-sm mb-2 font-medium">Your partner’s answer goes here 💕</label>
+                <textarea id="answer-input" rows="5"
+                          class="w-full rounded-2xl border-2 border-pink-200 focus:border-pink-400 p-4 text-lg resize-none"
+                          placeholder="Type the answer... be honest &amp; cute!"></textarea>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="submitAnswer()" 
+                        class="flex-1 bg-[#ff69b4] hover:bg-[#ff4d9f] text-white font-bold py-5 rounded-3xl text-xl shadow-lg shadow-pink-300/50 flex items-center justify-center gap-2">
+                    💌 SEND ANSWER
+                    <span class="text-2xl">→</span>
+                </button>
+                
+                <button onclick="closeModal()" 
+                        class="px-8 border-2 border-pink-300 text-pink-400 hover:bg-pink-50 rounded-3xl font-medium">
+                    Skip
+                </button>
+            </div>
+
+            <p class="text-center text-xs text-pink-400 mt-6">Question #<span id="modal-num" class="font-mono"></span></p>
+        </div>
+    </div>
+
+    <!-- ANSWERS HISTORY DRAWER -->
+    <div onclick="if(event.target.id === 'history-drawer') hideHistory()" 
+         id="history-drawer" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-end">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-white text-[#0f0a1f] w-full max-w-2xl mx-auto rounded-t-3xl p-6 max-h-[80vh] overflow-auto">
+            <div class="flex justify-between mb-6 sticky top-0 bg-white">
+                <h3 class="text-2xl font-bold">💕 Your love story so far</h3>
+                <button onclick="hideHistory()" class="text-3xl">×</button>
+            </div>
+            
+            <div id="history-list" class="space-y-6">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div onclick="clearHistory()" 
+                 class="text-center text-pink-400 text-sm mt-8 cursor-pointer hover:text-pink-500">
+                🗑️ Clear all answers and start fresh
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating action button for history -->
+    <button onclick="showHistory()" 
+            id="history-fab"
+            class="hidden fixed bottom-8 right-8 bg-white text-pink-500 w-14 h-14 rounded-3xl shadow-2xl flex items-center justify-center text-3xl z-50 border-4 border-pink-300">
+        💕
+    </button>
+
+    <script>
+        // Tailwind config
+        function initTailwind() {
+            tailwind.config = {
+                content: [],
+                theme: {
+                    extend: {}
+                }
+            }
+        }
+
+        // Full questions database (exactly as in the image)
+        const gameData = [
+            {
+                name: "The Basics",
+                emoji: "🪐",
+                color: "from-blue-400 to-cyan-400",
+                questions: [
+                    { num: 1, text: "Age" },
+                    { num: 2, text: "Gender" },
+                    { num: 3, text: "Height" },
+                    { num: 4, text: "Weight" },
+                    { num: 5, text: "Where are you from" },
+                    { num: 6, text: "Zodiac Sign" },
+                    { num: 7, text: "First Name" },
+                    { num: 8, text: "Last Name" },
+                    { num: 9, text: "Middle Name" },
+                    { num: 10, text: "Birthday" },
+                    { num: 11, text: "Main Language(s)" }
+                ]
+            },
+            {
+                name: "Hobbies / Favourite Things",
+                emoji: "🎨",
+                color: "from-pink-400 to-rose-400",
+                questions: [
+                    { num: 12, text: "Favorite Color" },
+                    { num: 13, text: "Favorite Food" },
+                    { num: 14, text: "Favorite Activity" },
+                    { num: 15, text: "Favorite Music genre" },
+                    { num: 16, text: "Favorite Artist" },
+                    { num: 17, text: "Favorite Song" },
+                    { num: 18, text: "Favorite Movie" },
+                    { num: 19, text: "Favorite Video Game (if any)" },
+                    { num: 20, text: "Favorite TV show" },
+                    { num: 21, text: "Do you play any sports" },
+                    { num: 22, text: "Last thing you did" }
+                ]
+            },
+            {
+                name: "Life / Experiences",
+                emoji: "🌍",
+                color: "from-amber-400 to-orange-400",
+                questions: [
+                    { num: 23, text: "Do you currently have a job" },
+                    { num: 24, text: "Future Job/Career/Ambitions" },
+                    { num: 25, text: "Have you drank/smoked anything" },
+                    { num: 26, text: "Have you done drugs" },
+                    { num: 27, text: "Do you have any pets" },
+                    { num: 28, text: "Most Favorable Memory" },
+                    { num: 29, text: "Most embarrassing moment" },
+                    { num: 30, text: "Dream Vacation" },
+                    { num: 31, text: "How many Family members" },
+                    { num: 32, text: "How many friends" },
+                    { num: 33, text: "Do you plan on going to college/university" }
+                ]
+            },
+            {
+                name: "Social Media",
+                emoji: "📱",
+                color: "from-purple-400 to-violet-400",
+                questions: [
+                    { num: 34, text: "Do you use any other social media" },
+                    { num: 35, text: "Who do you follow" },
+                    { num: 36, text: "Have you ever had an internet argument" },
+                    { num: 37, text: "Most used Social Media app" },
+                    { num: 38, text: "What's your username on each app" },
+                    { num: 39, text: "Have you met any friends online" },
+                    { num: 40, text: "Do you follow any NSFW accounts/pages" },
+                    { num: 41, text: "Last Person you DM'd/followed" },
+                    { num: 42, text: "What was the last message you sent" },
+                    { num: 43, text: "How many followers/friends on social media" },
+                    { num: 44, text: "Amount of time you use social media" }
+                ]
+            },
+            {
+                name: "Personal Belongings",
+                emoji: "💎",
+                color: "from-blue-400 to-indigo-400",
+                questions: [
+                    { num: 45, text: "Most expensive thing you own" },
+                    { num: 46, text: "Do you own anything above $1,000" },
+                    { num: 47, text: "Most prized possession" },
+                    { num: 48, text: "Do you own anything embarrassing" },
+                    { num: 49, text: "Weirdest thing you own" },
+                    { num: 50, text: "Do you own anything popular" },
+                    { num: 51, text: "Do you own anything considered 'rich'" },
+                    { num: 52, text: "Do you own anything futuristic" },
+                    { num: 53, text: "Coolest thing you own" },
+                    { num: 54, text: "Oldest thing you own" },
+                    { num: 55, text: "What did you buy/get recently" }
+                ]
+            },
+            {
+                name: "Looks / Appearance",
+                emoji: "✨",
+                color: "from-purple-500 to-pink-500",
+                questions: [
+                    { num: 66, text: "Hair Style" },
+                    { num: 67, text: "Hair Length" },
+                    { num: 68, text: "Hair Color" },
+                    { num: 69, text: "Nice" },
+                    { num: 70, text: "Body Style" },
+                    { num: 71, text: "Ethnicity" },
+                    { num: 72, text: "What are you wearing" },
+                    { num: 73, text: "Eye Color" },
+                    { num: 74, text: "Are you wearing makeup" },
+                    { num: 75, text: "Type of Underwear you wear" },
+                    { num: 76, text: "Favorite outfit" },
+                    { num: 77, text: "Facial/Body Hair" }
+                ]
+            },
+            {
+                name: "Relationships",
+                emoji: "💞",
+                color: "from-emerald-400 to-teal-400",
+                questions: [
+                    { num: 78, text: "Sexuality" },
+                    { num: 79, text: "Relationship Status" },
+                    { num: 80, text: "Who is your crush" },
+                    { num: 81, text: "Celebrity Crush" },
+                    { num: 82, text: "Have you ever cheated on someone" },
+                    { num: 83, text: "Ideal Girlfriend/Boyfriend" },
+                    { num: 84, text: "Idea of Perfect Date" },
+                    { num: 85, text: "Have you asked someone out" },
+                    { num: 86, text: "What do you hope in a relationship" },
+                    { num: 87, text: "Are you interested in anyone" },
+                    { num: 88, text: "Do you real life/online date" }
+                ]
+            },
+            {
+                name: "Sex / Sexuality",
+                emoji: "🔥",
+                color: "from-red-400 to-rose-500",
+                questions: [
+                    { num: 89, text: "Are you a virgin" },
+                    { num: 90, text: "Have you ever seen anyone naked" },
+                    { num: 91, text: "Do you have piercing/tattoos" },
+                    { num: 92, text: "Have you ever had same-sex experience" },
+                    { num: 93, text: "Have you ever sent a nude" },
+                    { num: 94, text: "Have you ever sexted" },
+                    { num: 95, text: "Have you ever kissed anyone" },
+                    { num: 96, text: "Am I attractive" },
+                    { num: 97, text: "Have you ever slept together" },
+                    { num: 98, text: "Do you want to have sex" },
+                    { num: 99, text: "Are you straight, bi, gay/lesbian, pan, etc." }
+                ]
+            },
+            {
+                name: "Sexual",
+                emoji: "🌶️",
+                color: "from-orange-400 to-red-400",
+                questions: [
+                    { num: 100, text: "Bra/Dick size" },
+                    { num: 101, text: "Public Hair: Natural, trimmed, shaved, none" },
+                    { num: 102, text: "Do you have any body hair" },
+                    { num: 103, text: "(Guys Only) Are you Circumcised" },
+                    { num: 104, text: "How often you Masturbate" },
+                    { num: 105, text: "Have you ever watched porn" },
+                    { num: 106, text: "Ideal Sexual/Physical attributes" },
+                    { num: 107, text: "Favorite Sexual Fantasy" },
+                    { num: 108, text: "Turn Ons/Turn Offs" },
+                    { num: 109, text: "Any Kinks" },
+                    { num: 110, text: "Ideal Sexual Position" },
+                    { num: 111, text: "How do you masturbate" },
+                    { num: 112, text: "Do you own a toy" },
+                    { num: 113, text: "Have you ever been caught Masturbating" },
+                    { num: 114, text: "Have you ever walked in when someone was having sex" },
+                    { num: 115, text: "Biggest fears of Sex" },
+                    { num: 116, text: "Do you have any STDs" },
+                    { num: 117, text: "How often are you horny" },
+                    { num: 118, text: "Most embarrassing sexual story" },
+                    { num: 119, text: "Are you currently horny" },
+                    { num: 120, text: "What do you expect in a sexual relationship" }
+                ]
+            },
+            {
+                name: "Academic / School",
+                emoji: "📚",
+                color: "from-sky-400 to-blue-400",
+                questions: [
+                    { num: 121, text: "Where do you go to school" },
+                    { num: 122, text: "What classes do you take" },
+                    { num: 123, text: "What grade are you in" },
+                    { num: 124, text: "Most favorite teacher" },
+                    { num: 125, text: "Least favorite teachers" },
+                    { num: 126, text: "Highest Grade/Lowest Grade in classes" },
+                    { num: 127, text: "How long is your school day" },
+                    { num: 128, text: "Did you do your homework" },
+                    { num: 129, text: "Do you have any test, quizzes, or exams coming up" },
+                    { num: 130, text: "Last bad grade" },
+                    { num: 131, text: "Last good grade" }
+                ]
+            },
+            {
+                name: "Economic Status / Wealth",
+                emoji: "💰",
+                color: "from-emerald-400 to-green-400",
+                questions: [
+                    { num: 132, text: "Are you rich/poor" },
+                    { num: 133, text: "Where do you stand in the wealth class (lower class, middle class, upper class)" },
+                    { num: 134, text: "How big is your house" },
+                    { num: 135, text: "Take a picture of your house" },
+                    { num: 136, text: "How much do your parents make" },
+                    { num: 137, text: "Do your parents struggle with debt" },
+                    { num: 138, text: "Do you own a pool (above-ground/below-ground)" },
+                    { num: 139, text: "Do you live in a gated neighborhood" },
+                    { num: 140, text: "Do you have expensive stuff" },
+                    { num: 141, text: "How big is your room" },
+                    { num: 142, text: "What kind of school do you go to" }
+                ]
+            },
+            {
+                name: "Misc",
+                emoji: "🎲",
+                color: "from-fuchsia-400 to-purple-400",
+                questions: [
+                    { num: 143, text: "Send a selfie" },
+                    { num: 144, text: "Do whatever I say (no saying no)" },
+                    { num: 145, text: "DM me" },
+                    { num: 146, text: "Ask whatever you want (I can't say no)" }
+                ]
+            }
+        ]
+
+        // State
+        let currentCategory = null
+        let coupleMode = true
+        let player1 = "You"
+        let player2 = "Partner ❤️"
+        let answersHistory = []
+
+        // Render categories on home
+        function renderCategories() {
+            const grid = document.getElementById("categories-grid")
+            grid.innerHTML = ""
+            
+            gameData.forEach(cat => {
+                const card = document.createElement("div")
+                card.className = `category-card bg-gradient-to-br ${cat.color} p-6 rounded-3xl text-white cursor-pointer flex flex-col h-full`
+                card.innerHTML = `
+                    <div class="text-5xl mb-4">${cat.emoji}</div>
+                    <h3 class="text-2xl font-bold mb-1">${cat.name}</h3>
+                    <p class="text-white/80 text-sm mt-auto">
+                        ${cat.questions[0].num} – ${cat.questions[cat.questions.length-1].num}
+                    </p>
+                `
+                card.onclick = () => openCategory(cat)
+                grid.appendChild(card)
+            })
+        }
+
+        // Open a category
+        function openCategory(cat) {
+            currentCategory = cat
+            document.getElementById("home-screen").classList.add("hidden")
+            document.getElementById("category-screen").classList.remove("hidden")
+            
+            document.getElementById("category-title").innerHTML = `
+                ${cat.emoji} <span class="text-[#ff69b4]">${cat.name}</span>
+            `
+            document.getElementById("category-range").textContent = 
+                `Questions ${cat.questions[0].num} – ${cat.questions[cat.questions.length-1].num}`
+            document.getElementById("category-emoji").innerHTML = cat.emoji
+            
+            renderQuestionsList(cat)
+            
+            // Show FAB only in category view
+            document.getElementById("history-fab").classList.remove("hidden")
+        }
+
+        // Render questions inside category
+        function renderQuestionsList(cat) {
+            const container = document.getElementById("questions-list")
+            container.innerHTML = ""
+            
+            cat.questions.forEach(q => {
+                const div = document.createElement("div")
+                div.className = `question-item flex items-center justify-between bg-white/10 hover:bg-white/90 hover:text-[#0f0a1f] px-6 py-5 rounded-3xl cursor-pointer`
+                div.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="bg-pink-200 text-pink-700 w-9 h-9 flex items-center justify-center rounded-2xl font-bold text-xl">${q.num}</div>
+                        <p class="text-lg">${q.text}</p>
+                    </div>
+                    ${coupleMode ? `<span class="text-3xl">👉</span>` : `<span class="text-pink-300 text-3xl">📋</span>`}
+                `
+                div.onclick = () => openQuestionModal(q)
+                container.appendChild(div)
+            })
+        }
+
+        // Open the cute answer modal
+        function openQuestionModal(q) {
+            if (!coupleMode) {
+                // Solo mode – just show the question
+                alert(`📋 Question #${q.num}\n\n${q.text}\n\n(Share this with your partner and talk about it!)`)
+                return
+            }
+            
+            const modal = document.getElementById("question-modal")
+            modal.classList.remove("hidden")
+            modal.classList.add("flex")
+            
+            document.getElementById("modal-num").textContent = q.num
+            document.getElementById("modal-question").innerHTML = `
+                <span class="text-4xl mr-3">${currentCategory.emoji}</span>
+                ${q.text}
+            `
+            
+            // Who is being asked?
+            document.getElementById("modal-player-tag").innerHTML = `
+                💌 Asking <span class="font-bold">${player2}</span>
+            `
+            
+            // Clear previous answer
+            document.getElementById("answer-input").value = ""
+            document.getElementById("answer-input").focus()
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("question-modal")
+            modal.classList.add("hidden")
+            modal.classList.remove("flex")
+        }
+
+        // Submit answer – the fun multiplayer part
+        function submitAnswer() {
+            const input = document.getElementById("answer-input").value.trim()
+            if (!input) {
+                alert("💕 Your partner has to say something cute!")
+                return
+            }
+            
+            const questionNum = parseInt(document.getElementById("modal-num").textContent)
+            
+            // Find the question text
+            const questionText = currentCategory.questions.find(q => q.num === questionNum).text
+            
+            answersHistory.unshift({
+                num: questionNum,
+                question: questionText,
+                answer: input,
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            })
+            
+            closeModal()
+            
+            // Cute confirmation
+            const confirmation = document.createElement("div")
+            confirmation.style.cssText = `
+                position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+                background: #ff69b4; color: white; padding: 20px 30px; border-radius: 9999px;
+                box-shadow: 0 10px 15px -3px rgb(249 115 22);
+                display: flex; align-items: center; gap: 12px; z-index: 9999; font-size: 18px;
+            `
+            confirmation.innerHTML = `
+                💘 Answer saved! 
+                <span class="text-3xl">❤️</span>
+            `
+            document.body.appendChild(confirmation)
+            
+            // Floating hearts animation
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement("div")
+                    heart.textContent = "💕"
+                    heart.className = "floating-hearts text-3xl"
+                    heart.style.left = Math.random() * 100 + "vw"
+                    heart.style.bottom = "20px"
+                    heart.style.animationDelay = Math.random() * 800 + "ms"
+                    document.body.appendChild(heart)
+                    
+                    setTimeout(() => heart.remove(), 3500)
+                }, i * 40)
+            }
+            
+            setTimeout(() => confirmation.remove(), 2200)
+            
+            // Show history button if first answer
+            if (answersHistory.length === 1) {
+                document.getElementById("history-fab").classList.remove("hidden")
+            }
+        }
+
+        function toggleCoupleMode() {
+            coupleMode = !coupleMode
+            
+            const dot = document.getElementById("couple-dot")
+            const text = document.getElementById("couple-text")
+            
+            if (coupleMode) {
+                dot.style.backgroundColor = "#ff69b4"
+                text.innerHTML = `👩‍❤️‍💋‍👨 COUPLE MODE ON`
+            } else {
+                dot.style.backgroundColor = "#64748b"
+                text.innerHTML = `📋 SOLO MODE`
+            }
+            
+            // Refresh current list if open
+            if (currentCategory) {
+                renderQuestionsList(currentCategory)
+            }
+        }
+
+        function editPlayers() {
+            const p1 = prompt("Your name / nickname 💕", player1) || player1
+            const p2 = prompt("Your partner’s name / nickname ❤️", player2) || player2
+            
+            player1 = p1
+            player2 = p2
+            
+            document.getElementById("player1-name").textContent = player1
+            document.getElementById("player2-name").textContent = player2
+        }
+
+        function showHistory() {
+            const drawer = document.getElementById("history-drawer")
+            const list = document.getElementById("history-list")
+            list.innerHTML = ""
+            
+            if (answersHistory.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12 text-pink-300">
+                        <div class="text-7xl mb-4">💕</div>
+                        <p class="text-xl">No answers yet...</p>
+                        <p class="text-sm">Go ask your partner some spicy questions!</p>
+                    </div>
+                `
+            } else {
+                answersHistory.forEach((entry, i) => {
+                    const item = document.createElement("div")
+                    item.className = "border-l-4 border-pink-400 pl-4"
+                    item.innerHTML = `
+                        <div class="flex justify-between text-xs text-pink-400 mb-1">
+                            <span>#${entry.num}</span>
+                            <span>${entry.timestamp}</span>
+                        </div>
+                        <p class="font-medium text-lg mb-2">${entry.question}</p>
+                        <p class="italic text-[#0f0a1f]/70">"${entry.answer}"</p>
+                    `
+                    list.appendChild(item)
+                })
+            }
+            
+            drawer.classList.remove("hidden")
+            drawer.classList.add("flex")
+        }
+
+        function hideHistory() {
+            const drawer = document.getElementById("history-drawer")
+            drawer.classList.add("hidden")
+            drawer.classList.remove("flex")
+        }
+
+        function clearHistory() {
+            if (confirm("Clear all saved answers? 💔")) {
+                answersHistory = []
+                hideHistory()
+            }
+        }
+
+        function goHome() {
+            currentCategory = null
+            document.getElementById("category-screen").classList.add("hidden")
+            document.getElementById("home-screen").classList.remove("hidden")
+            document.getElementById("history-fab").classList.add("hidden")
+        }
+
+        // Initialize everything
+        function launchGame() {
+            initTailwind()
+            renderCategories()
+            
+            console.log('%c❤️ The Number Game V2 ready for some cute couple fun!', 'color:#ff69b4; font-size:13px; font-weight:bold')
+            
+            // Easter egg: press "L" for extra love
+            document.addEventListener('keydown', (e) => {
+                if (e.key.toLowerCase() === 'l') {
+                    const hearts = document.createElement("div")
+                    hearts.style.position = "fixed"
+                    hearts.style.top = "20%"
+                    hearts.style.left = "50%"
+                    hearts.style.fontSize = "60px"
+                    hearts.style.transform = "translate(-50%, -50%)"
+                    hearts.innerHTML = "💕💕💕"
+                    document.body.appendChild(hearts)
+                    setTimeout(() => hearts.remove(), 1800)
+                }
+            })
+        }
+
+        // Start the app
+        window.onload = launchGame
+    </script>
+</body>
+</html>
