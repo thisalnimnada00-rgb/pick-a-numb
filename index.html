@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Number Game V2</title>
+    <title>The Number Game V2 💕</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;family=Comic+Neue:wght@400;700&amp;display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&amp;family=Poppins:wght@400;600&amp;display=swap');
         
         :root {
-            --tw-color-primary: #ff9ff3;
+            --tw-color-primary: #ff69b4;
         }
         
         body {
@@ -25,8 +25,8 @@
         }
         
         .category-card:hover {
-            transform: scale(1.08) rotate(2deg);
-            box-shadow: 0 25px 50px -12px rgb(255 159 243);
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 25px 50px -12px rgb(255 105 180);
         }
         
         .question-card {
@@ -35,789 +35,737 @@
         
         .question-card:hover {
             transform: translateY(-4px);
-            background-color: #2a2a3a;
+            background-color: #fff1f2;
         }
         
-        .modal {
-            animation: popIn 0.3s ease;
+        .heart-float {
+            animation: floatHeart 3s ease-in-out infinite;
         }
         
-        @keyframes popIn {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes floatHeart {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
         
-        .cute-bubble {
-            position: relative;
+        .screen {
+            animation: screenPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .cute-bubble:after {
-            content: '';
+        .confetti {
             position: absolute;
-            bottom: -10px;
-            left: 30px;
-            border: 10px solid transparent;
-            border-top-color: #ff9ff3;
-        }
-        
-        .heart {
-            animation: floatHeart 3s infinite ease-in-out;
+            width: 10px;
+            height: 10px;
+            animation: confetti-fall 3s linear forwards;
         }
     </style>
 </head>
-<body class="bg-[#0f0f1e] text-white min-h-screen overflow-x-hidden">
-    <!-- HEADER -->
-    <div class="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between border-b border-white/10">
-        <div class="flex items-center gap-x-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-400 rounded-2xl flex items-center justify-center text-4xl shadow-lg shadow-pink-500/50">🎲</div>
-            <div>
-                <h1 class="title-font text-5xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400">The Number Game</h1>
-                <p class="text-pink-300 text-sm -mt-1 flex items-center gap-x-1">
-                    <span class="px-2 py-0.5 bg-pink-400/20 text-pink-400 rounded-full text-xs font-medium">V2</span>
-                    made with 💖 for cute chaos
-                </p>
-            </div>
-        </div>
+<body class="bg-black text-white min-h-screen overflow-x-hidden">
+    <div class="max-w-4xl mx-auto p-4">
         
-        <div class="flex items-center gap-x-4">
-            <!-- Single / Multi toggle -->
-            <div onclick="toggleMode()" id="mode-toggle" 
-                 class="flex items-center bg-white/10 hover:bg-white/20 rounded-3xl px-2 py-1 cursor-pointer transition-all">
-                <div id="single-pill" class="px-5 py-2 rounded-3xl text-sm font-medium flex items-center gap-x-1 bg-white text-[#0f0f1e]">
-                    <span>👤</span> Single
-                </div>
-                <div id="multi-pill" class="px-5 py-2 rounded-3xl text-sm font-medium flex items-center gap-x-1">
-                    <span>👥</span> Multi
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-8 pt-6">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-pink-500 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">🎲</div>
+                <div>
+                    <h1 class="title-font text-5xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">The Number Game</h1>
+                    <p class="text-pink-300 text-sm -mt-1">V2 • Made with love 💕</p>
                 </div>
             </div>
             
-            <button onclick="showHelp()" 
-                    class="w-10 h-10 flex items-center justify-center text-2xl hover:scale-110 transition-transform">
-                ❔
+            <div id="player-info" class="hidden items-center gap-4 bg-zinc-900 rounded-3xl px-6 py-2 text-sm font-medium">
+                <div class="flex items-center gap-2">
+                    <div id="p1-avatar" class="w-8 h-8 bg-pink-400 rounded-2xl flex items-center justify-center text-xl">👤</div>
+                    <span id="p1-name" class="text-pink-300"></span>
+                </div>
+                <div class="h-6 w-px bg-zinc-700"></div>
+                <div class="flex items-center gap-2">
+                    <div id="p2-avatar" class="w-8 h-8 bg-purple-400 rounded-2xl flex items-center justify-center text-xl">👤</div>
+                    <span id="p2-name" class="text-purple-300"></span>
+                </div>
+            </div>
+            
+            <button onclick="toggleHowToPlay()" 
+                    class="px-5 py-2 bg-white/10 hover:bg-white/20 rounded-3xl text-sm font-medium flex items-center gap-2 transition-all">
+                <span class="text-xl">❔</span>
+                How to Play
             </button>
         </div>
-    </div>
 
-    <div class="max-w-5xl mx-auto px-6 pb-12">
-        
-        <!-- HOME SCREEN (Categories) -->
-        <div id="home-screen">
-            <div class="text-center mb-12 mt-8">
-                <div class="inline-flex items-center gap-x-2 bg-white/5 text-pink-300 text-sm font-medium px-6 py-3 rounded-3xl mb-6">
-                    <span class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-400"></span>
-                    </span>
-                    Pick a category • Answer honestly • Have fun!
+        <!-- SCREEN: LANDING / CATEGORY MENU (First screen as requested) -->
+        <div id="landing-screen" class="screen">
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-3 bg-white/10 text-white text-xl font-medium px-8 py-4 rounded-3xl mb-6">
+                    <span class="heart-float text-3xl">💖</span>
+                    Ready to spill the tea? 
+                    <span class="heart-float text-3xl">💖</span>
                 </div>
-                <h2 class="text-4xl title-font text-white/90">Choose your vibe ✨</h2>
-                <p class="text-white/60 mt-3 max-w-md mx-auto">From basics to spicy secrets — each number has a question waiting for you 💕</p>
+                <h2 class="text-4xl font-bold title-font mb-2">Choose your vibe!</h2>
+                <p class="text-zinc-400 max-w-md mx-auto">Pick a category to start the fun. Then we'll play multiplayer turns ✨</p>
             </div>
 
             <!-- Category Grid -->
-            <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <!-- Populated by JS -->
             </div>
-        </div>
 
-        <!-- CATEGORY VIEW SCREEN -->
-        <div id="category-screen" class="hidden">
-            <div class="flex items-center justify-between mb-8">
-                <button onclick="goBackToHome()" 
-                        class="flex items-center gap-x-2 text-pink-300 hover:text-pink-200 transition-colors">
-                    <span class="text-3xl leading-none">←</span> 
-                    <span class="font-medium">Back to categories</span>
+            <div class="mt-12 text-center">
+                <button onclick="startMultiplayerSetup()" 
+                        class="group relative inline-flex items-center gap-3 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white font-semibold text-xl px-10 py-6 rounded-3xl transition-all active:scale-95">
+                    <span>🎮 START MULTIPLAYER GAME</span>
+                    <span class="text-4xl group-active:rotate-12 transition-transform">🚀</span>
                 </button>
-                <div id="category-header" class="flex items-center gap-x-4 text-2xl font-semibold"></div>
-            </div>
-            
-            <div id="questions-list" class="space-y-4">
-                <!-- Populated by JS -->
+                <p class="text-xs text-zinc-500 mt-4">Local multiplayer • Same device • Super cute turns</p>
+                <p class="text-xs text-zinc-500">Create / Join rooms coming soon with Firebase (just ask me!)</p>
             </div>
         </div>
 
-        <!-- QUESTION MODAL -->
-        <div onclick="if(event.target.id === 'question-modal')hideQuestionModal()" 
-             id="question-modal"
-             class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-            <div onclick="event.stopImmediatePropagation()" 
-                 class="modal bg-[#1a1a2a] w-full max-w-lg mx-4 rounded-3xl p-8 cute-bubble shadow-2xl">
-                <div class="flex justify-between items-start mb-6">
+        <!-- SCREEN: MULTIPLAYER SETUP -->
+        <div id="setup-screen" class="screen hidden">
+            <div class="bg-zinc-900 rounded-3xl p-8 max-w-md mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-8 title-font">Let's meet the players! 👋</h2>
+                
+                <div class="space-y-8">
                     <div>
-                        <span id="modal-number" class="text-7xl font-bold text-pink-400 title-font"></span>
+                        <label class="text-pink-300 text-sm block mb-2">Player 1 (the first picker 💖)</label>
+                        <input id="player1-name" type="text" value="Alex" 
+                               class="w-full bg-zinc-800 border border-pink-300/30 focus:border-pink-400 rounded-3xl px-6 py-5 text-xl outline-none">
                     </div>
-                    <button onclick="hideQuestionModal()" class="text-4xl text-white/40 hover:text-white">✕</button>
-                </div>
-                
-                <p id="modal-question" class="text-2xl leading-tight mb-8 text-white"></p>
-                
-                <!-- Answer area -->
-                <div class="mb-8">
-                    <label class="text-pink-300 text-sm font-medium flex items-center gap-x-2 mb-3">
-                        <span>Your answer goes here 💬</span>
-                    </label>
-                    <textarea id="answer-input" rows="4"
-                              class="w-full bg-white/10 border border-white/20 focus:border-pink-400 rounded-2xl px-6 py-4 text-lg resize-none focus:outline-none"></textarea>
-                </div>
-                
-                <div class="flex gap-x-3">
-                    <button onclick="submitAnswer()" 
-                            class="flex-1 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-semibold py-5 rounded-2xl text-xl flex items-center justify-center gap-x-2 hover:brightness-110 transition">
-                        <span>Send my truth ✨</span>
-                        <span class="text-2xl">💖</span>
-                    </button>
                     
-                    <button onclick="hideQuestionModal()" 
-                            class="px-8 bg-white/10 hover:bg-white/20 rounded-2xl font-medium">
-                        Close
-                    </button>
+                    <div>
+                        <label class="text-purple-300 text-sm block mb-2">Player 2 (ready to answer 💜)</label>
+                        <input id="player2-name" type="text" value="Jordan" 
+                               class="w-full bg-zinc-800 border border-purple-300/30 focus:border-purple-400 rounded-3xl px-6 py-5 text-xl outline-none">
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mt-12">
+                    <button onclick="cancelSetup()" 
+                            class="flex-1 py-6 text-lg font-medium border border-white/30 hover:bg-white/10 rounded-3xl">Cancel</button>
+                    <button onclick="startGame()" 
+                            class="flex-1 py-6 bg-gradient-to-r from-pink-400 to-purple-500 text-white text-xl font-bold rounded-3xl">LET'S PLAY! 🎉</button>
                 </div>
                 
-                <p id="modal-player-info" class="text-center text-white/40 text-sm mt-6"></p>
+                <p class="text-center text-xs text-zinc-400 mt-6">You'll take turns picking questions for each other</p>
             </div>
         </div>
 
-        <!-- MULTIPLAYER SCREEN -->
-        <div id="multiplayer-screen" class="hidden">
-            <div class="max-w-2xl mx-auto text-center py-12">
-                <div class="text-6xl mb-6">👥</div>
-                <h2 class="title-font text-5xl mb-2">Multiplayer Mode</h2>
-                <p class="text-white/60 mb-10">Create a room or join your friends • Real-time • Super cute</p>
+        <!-- SCREEN: GAME PLAY -->
+        <div id="game-screen" class="screen hidden">
+            
+            <!-- Turn header -->
+            <div id="turn-header" class="flex items-center justify-between mb-6 bg-zinc-900 rounded-3xl px-8 py-5">
+                <div class="flex items-center gap-4">
+                    <div id="current-avatar" class="w-10 h-10 rounded-2xl flex items-center justify-center text-3xl"></div>
+                    <div>
+                        <span id="turn-text" class="font-bold text-2xl title-font"></span>
+                        <p id="role-text" class="text-sm text-zinc-400"></p>
+                    </div>
+                </div>
                 
-                <div class="bg-white/5 rounded-3xl p-8">
-                    <div class="grid grid-cols-2 gap-6">
-                        <!-- Create Room -->
-                        <div onclick="createRoom()" 
-                             class="bg-gradient-to-br from-cyan-400 to-purple-400 text-black rounded-3xl p-8 cursor-pointer hover:scale-105 transition-all">
-                            <div class="text-4xl mb-4">🎟️</div>
-                            <h3 class="text-2xl font-semibold mb-1">Create Room</h3>
-                            <p class="text-black/70">Start a new game and invite friends</p>
-                            <div class="mt-8 text-xs font-mono bg-black/20 text-white/70 px-4 py-2 rounded-2xl inline-flex items-center">
-                                Room code will appear here →
-                            </div>
+                <div onclick="endGame()" class="cursor-pointer text-zinc-400 hover:text-pink-300 flex items-center gap-1 text-sm">
+                    <span>END GAME</span>
+                    <span class="text-xl">✕</span>
+                </div>
+            </div>
+
+            <!-- PICKER VIEW: Categories -->
+            <div id="picker-view" class="hidden">
+                <h3 class="text-pink-300 text-xl mb-4 flex items-center gap-2">
+                    <span>🌟</span> 
+                    Choose a category for <span id="picker-name-display" class="font-bold"></span> to answer!
+                </h3>
+                <div id="picker-category-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- PICKER VIEW: Questions in selected category -->
+            <div id="questions-view" class="hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="backToCategories()" 
+                            class="flex items-center gap-2 text-pink-300 hover:text-pink-400 font-medium">
+                        ← Back to categories
+                    </button>
+                    <h3 id="selected-category-name" class="font-bold text-2xl"></h3>
+                </div>
+                
+                <div id="questions-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- ANSWER VIEW (shown to both, but input only for answerer) -->
+            <div id="answer-view" class="hidden">
+                <div class="bg-white/10 rounded-3xl p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span id="question-number-badge" class="inline-block bg-pink-400 text-white text-xs font-bold px-4 py-1 rounded-3xl"></span>
+                            <h2 id="current-question-text" class="text-3xl font-medium mt-3 leading-tight"></h2>
                         </div>
-                        
-                        <!-- Join Room -->
-                        <div onclick="joinRoomPrompt()" 
-                             class="bg-white/10 hover:bg-white/20 border border-white/30 rounded-3xl p-8 cursor-pointer hover:scale-105 transition-all">
-                            <div class="text-4xl mb-4">🔑</div>
-                            <h3 class="text-2xl font-semibold mb-1">Join Room</h3>
-                            <p class="text-white/70">Enter a room code to play together</p>
-                            <input id="join-code-input" 
-                                   onkeydown="if(event.key==='Enter') joinRoom()"
-                                   placeholder="6-LETTER CODE"
-                                   class="mt-8 w-full text-center font-mono text-3xl bg-transparent border-b-2 border-white/40 focus:border-pink-400 outline-none py-3 uppercase tracking-widest">
-                        </div>
+                        <div id="answerer-avatar" class="text-5xl"></div>
                     </div>
                     
-                    <div id="room-lobby" class="hidden mt-8 pt-8 border-t border-white/10">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="font-medium flex items-center gap-x-2">
-                                <span id="room-code-display" class="font-mono text-3xl text-pink-400"></span>
-                                <span onclick="copyRoomCode()" class="cursor-pointer text-xs px-3 py-1 bg-pink-400/20 text-pink-400 rounded-2xl">📋 copy</span>
-                            </div>
-                            <div onclick="leaveRoom()" class="text-white/40 hover:text-red-400 cursor-pointer text-sm">Leave room</div>
-                        </div>
+                    <div id="answer-input-area" class="mt-8">
+                        <p id="answer-prompt" class="text-purple-300 mb-3 font-medium">Your turn to answer! Be honest... or cute 😘</p>
+                        <textarea id="answer-input" rows="4"
+                                  class="w-full bg-white/10 border border-purple-300/30 focus:border-purple-400 rounded-3xl p-6 text-lg placeholder:text-zinc-400 outline-none resize-none"></textarea>
                         
-                        <div class="mb-6">
-                            <p class="text-white/60 text-sm mb-3">Players in the room 💕</p>
-                            <div id="players-list" class="flex flex-wrap gap-3"></div>
-                        </div>
-                        
-                        <button onclick="startMultiplayerGame()" 
-                                class="w-full py-6 text-xl font-semibold bg-gradient-to-r from-pink-400 to-cyan-400 rounded-3xl text-black flex items-center justify-center gap-x-3">
-                            <span>START THE GAME 🎲</span>
+                        <button onclick="submitAnswer()" 
+                                class="mt-6 w-full py-6 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-3xl text-xl font-bold flex items-center justify-center gap-3 hover:brightness-110">
+                            SEND ANSWER 💌
                             <span class="text-3xl">→</span>
                         </button>
+                    </div>
+                    
+                    <!-- Answer revealed -->
+                    <div id="answer-revealed" class="hidden mt-8">
+                        <div class="bg-white/10 rounded-3xl p-6">
+                            <p class="text-xs uppercase tracking-widest text-purple-300 mb-2">They answered:</p>
+                            <p id="revealed-answer-text" class="text-2xl leading-relaxed"></p>
+                        </div>
                         
-                        <p id="room-status" class="text-white/40 text-xs mt-4 text-center">Waiting for at least 2 players...</p>
+                        <button onclick="nextTurn()" 
+                                class="mt-8 w-full py-6 bg-white text-black rounded-3xl text-xl font-bold flex items-center justify-center gap-3 hover:scale-105 transition-all">
+                            NEXT ROUND ✨
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History log -->
+            <div class="mt-12">
+                <h4 class="text-zinc-400 text-sm mb-3 flex items-center gap-2"><span>📜</span> Previous rounds</h4>
+                <div id="history-log" class="space-y-3 max-h-60 overflow-y-auto text-sm">
+                    <!-- JS populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- HOW TO PLAY MODAL -->
+        <div onclick="if(event.target.id === 'how-modal')toggleHowToPlay()" 
+             id="how-modal"
+             class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div onclick="event.stopImmediatePropagation()" 
+                 class="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-8">
+                <h2 class="text-3xl title-font mb-6">How to play 💕</h2>
+                <div class="space-y-6 text-zinc-300">
+                    <div class="flex gap-4">
+                        <div class="text-4xl">1️⃣</div>
+                        <div>Player 1 picks a <strong>category</strong> then a <strong>question</strong></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-4xl">2️⃣</div>
+                        <div>The question appears for Player 2 to answer</div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-4xl">3️⃣</div>
+                        <div>Player 2 types their answer → it shows instantly to Player 1</div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-4xl">4️⃣</div>
+                        <div>Then Player 2 becomes the picker! Turns swap each round</div>
+                    </div>
+                    <div class="pt-4 border-t border-white/10 text-pink-300 text-center text-sm">
+                        Super cute, super honest, super fun.<br>
+                        No repeats. No pressure. Just vibes ✨
                     </div>
                 </div>
                 
-                <div onclick="goBackToHome()" class="text-white/40 text-sm mt-8 cursor-pointer hover:text-white">← Back to main menu</div>
+                <button onclick="toggleHowToPlay()" 
+                        class="mt-8 w-full py-6 rounded-3xl bg-pink-400 text-white font-bold">Got it! Let's gooo</button>
             </div>
         </div>
-
-        <!-- IN-GAME MULTIPLAYER HEADER (shown when game is active) -->
-        <div id="multi-game-header" class="hidden fixed top-0 left-0 right-0 bg-[#0f0f1e] border-b border-white/10 z-40 px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
-            <div class="flex items-center gap-x-4">
-                <span class="text-3xl">🎲</span>
-                <div>
-                    <div id="current-room-code-small" class="font-mono text-pink-400 text-sm"></div>
-                    <div id="current-turn" class="text-sm font-medium"></div>
-                </div>
-            </div>
-            <button onclick="endMultiplayerGame()" 
-                    class="px-6 py-2 text-xs font-medium bg-white/10 hover:bg-red-400/10 hover:text-red-400 rounded-3xl">End game</button>
-        </div>
-    </div>
-
-    <!-- TOAST -->
-    <div id="toast" onclick="this.classList.add('hidden')" 
-         class="hidden fixed bottom-6 right-6 bg-gradient-to-r from-pink-400 to-purple-400 text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-x-3 text-lg z-50">
     </div>
 
     <script>
         // Tailwind script initialization
         function initTailwind() {
-            return {
-                config(userConfig = {}) {
-                    return {
-                        configUser: userConfig,
-                        theme: {
-                            extend: {
-                                colors: {
-                                    primary: '#ff9ff3'
-                                }
-                            }
-                        }
-                    }
-                },
+            tailwind.config = {
+                content: [],
                 theme: {
                     extend: {}
                 }
             }
         }
-        
-        // FULL GAME DATA - extracted from your image
-        const CATEGORIES = {
-            "The Basics": {
-                emoji: "📍",
-                color: "from-blue-400 to-cyan-400",
-                questions: [
-                    { num: 1, text: "Age" },
-                    { num: 2, text: "Gender" },
-                    { num: 3, text: "Height" },
-                    { num: 4, text: "Weight" },
-                    { num: 5, text: "Where are you from" },
-                    { num: 6, text: "Zodiac Sign" },
-                    { num: 7, text: "First Name" },
-                    { num: 8, text: "Last Name" },
-                    { num: 9, text: "Middle Name" },
-                    { num: 10, text: "Birthday" },
-                    { num: 11, text: "Main Language(s)" }
-                ]
-            },
-            "Hobbies/Favourite Things": {
-                emoji: "🎨",
-                color: "from-pink-400 to-rose-400",
-                questions: [
-                    { num: 12, text: "Favorite Color" },
-                    { num: 13, text: "Favorite Food" },
-                    { num: 14, text: "Favorite Activity" },
-                    { num: 15, text: "Favorite Music genre" },
-                    { num: 16, text: "Favorite Artist" },
-                    { num: 17, text: "Favorite Song" },
-                    { num: 18, text: "Favorite Movie" },
-                    { num: 19, text: "Favorite Video Game (if any)" },
-                    { num: 20, text: "Favorite TV show" },
-                    { num: 21, text: "Do you play any sports" },
-                    { num: 22, text: "Last thing you did" }
-                ]
-            },
-            "Life/Experiences": {
-                emoji: "🌟",
-                color: "from-orange-400 to-amber-400",
-                questions: [
-                    { num: 23, text: "Do you currently have a job" },
-                    { num: 24, text: "Future Job/Career/Ambitions" },
-                    { num: 25, text: "Have you drank/smoked anything" },
-                    { num: 26, text: "Have you done drugs" },
-                    { num: 27, text: "Do you have any pets" },
-                    { num: 28, text: "Most Favorable Memory" },
-                    { num: 29, text: "Most embarrassing moment" },
-                    { num: 30, text: "Dream Vacation" },
-                    { num: 31, text: "How many Family members" },
-                    { num: 32, text: "How many friends" },
-                    { num: 33, text: "Do you plan on going to college/university" }
-                ]
-            },
-            "Social Media": {
-                emoji: "📱",
-                color: "from-sky-400 to-blue-400",
-                questions: [
-                    { num: 34, text: "Do you use any other social media" },
-                    { num: 35, text: "Who do you follow" },
-                    { num: 36, text: "Have you ever had an internet argument" },
-                    { num: 37, text: "Most used Social Media app" },
-                    { num: 38, text: "What's your username on each app" },
-                    { num: 39, text: "Have you met any friends online" },
-                    { num: 40, text: "Do you follow any NSFW accounts/pages" },
-                    { num: 41, text: "Last Person you DM'd/followed" },
-                    { num: 42, text: "What was the last message you sent" },
-                    { num: 43, text: "How many followers/friends on social media" },
-                    { num: 44, text: "Amount of time you use social media" }
-                ]
-            },
-            "Personal Belongings": {
-                emoji: "💎",
-                color: "from-purple-400 to-violet-400",
-                questions: [
-                    { num: 45, text: "Most expensive thing you own" },
-                    { num: 46, text: "Do you own anything above $1,000" },
-                    { num: 47, text: "Most prized possession" },
-                    { num: 48, text: "Do you own anything embarrassing" },
-                    { num: 49, text: "Weirdest thing you own" },
-                    { num: 50, text: "Do you own anything popular" },
-                    { num: 51, text: "Do you own anything considered “rich”" },
-                    { num: 52, text: "Do you own anything futuristic" },
-                    { num: 53, text: "Coolest thing you own" },
-                    { num: 54, text: "Oldest thing you own" },
-                    { num: 55, text: "What did you buy/get recently" }
-                ]
-            },
-            "Looks/Appearance": {
-                emoji: "🪞",
-                color: "from-fuchsia-400 to-pink-400",
-                questions: [
-                    { num: 66, text: "Hair Style" },
-                    { num: 67, text: "Hair Length" },
-                    { num: 68, text: "Hair Color" },
-                    { num: 69, text: "Nice" },
-                    { num: 70, text: "Body Style" },
-                    { num: 71, text: "Ethnicity" },
-                    { num: 72, text: "What are you wearing" },
-                    { num: 73, text: "Eye Color" },
-                    { num: 74, text: "Are you wearing makeup" },
-                    { num: 75, text: "Type of Underwear you wear" },
-                    { num: 76, text: "Favorite outfit" },
-                    { num: 77, text: "Facial/Body Hair" }
-                ]
-            },
-            "Relationships": {
-                emoji: "💞",
-                color: "from-emerald-400 to-teal-400",
-                questions: [
-                    { num: 78, text: "Sexuality" },
-                    { num: 79, text: "Relationship Status" },
-                    { num: 80, text: "Who is your crush" },
-                    { num: 81, text: "Celebrity Crush" },
-                    { num: 82, text: "Have you ever cheated on someone" },
-                    { num: 83, text: "Ideal Girlfriend/Boyfriend" },
-                    { num: 84, text: "Idea of Perfect Date" },
-                    { num: 85, text: "Have you asked someone out" },
-                    { num: 86, text: "What do you hope in a relationship" },
-                    { num: 87, text: "Are you interested in anyone" },
-                    { num: 88, text: "Do you real life/online date" }
-                ]
-            },
-            "Sex/Sexuality": {
-                emoji: "🔥",
-                color: "from-red-400 to-pink-400",
-                questions: [
-                    { num: 89, text: "Are you a virgin" },
-                    { num: 90, text: "Have you ever seen anyone naked" },
-                    { num: 91, text: "Do you have piercing/tattoos" },
-                    { num: 92, text: "Have you ever had same-sex experience" },
-                    { num: 93, text: "Have you ever sent a nude" },
-                    { num: 94, text: "Have you ever sexted" },
-                    { num: 95, text: "Have you ever kissed anyone" },
-                    { num: 96, text: "Am I attractive" },
-                    { num: 97, text: "Have you ever slept together" },
-                    { num: 98, text: "Do you want to have sex" },
-                    { num: 99, text: "Are you straight, bi, gay/lesbian, pan, etc." },
-                    { num: 100, text: "Bra/Dick size" },
-                    { num: 101, text: "Pubic Hair: Natural, trimmed, shaved, none" },
-                    { num: 102, text: "Do you have any body hair" },
-                    { num: 103, text: "(Guys Only) Are you Circumcised" },
-                    { num: 104, text: "How often you Masturbate" },
-                    { num: 105, text: "Have you ever watched porn" },
-                    { num: 106, text: "Ideal Sexual/Physical attributes" },
-                    { num: 107, text: "Favorite Sexual Fantasy" },
-                    { num: 108, text: "Turn Ons/Turn Offs" },
-                    { num: 109, text: "Any Kinks" },
-                    { num: 110, text: "Ideal Sexual Position" },
-                    { num: 111, text: "How do you masturbate" },
-                    { num: 112, text: "Do you own a toy" },
-                    { num: 113, text: "Have you ever been caught Masturbating" },
-                    { num: 114, text: "Have you ever walked in when someone was having sex" },
-                    { num: 115, text: "Biggest fears of Sex" },
-                    { num: 116, text: "Do you have any STDs" },
-                    { num: 117, text: "How often are you horny" },
-                    { num: 118, text: "Most embarrassing sexual story" },
-                    { num: 119, text: "Are you currently horny" },
-                    { num: 120, text: "What do you expect in a sexual relationship" }
-                ]
-            },
-            "Academic/School": {
-                emoji: "📚",
-                color: "from-amber-400 to-orange-400",
-                questions: [
-                    { num: 121, text: "Where do you go to school" },
-                    { num: 122, text: "What classes do you take" },
-                    { num: 123, text: "What grade are you in" },
-                    { num: 124, text: "Most favorite teacher" },
-                    { num: 125, text: "Least favorite teachers" },
-                    { num: 126, text: "Highest Grade/Lowest Grade in classes" },
-                    { num: 127, text: "How long is your school day" },
-                    { num: 128, text: "Did you do your homework" },
-                    { num: 129, text: "Do you have any test, quizzes, or exams coming up" },
-                    { num: 130, text: "Last bad grade" },
-                    { num: 131, text: "Last good grade" }
-                ]
-            },
-            "Economic Status/Wealth": {
-                emoji: "💰",
-                color: "from-green-400 to-emerald-400",
-                questions: [
-                    { num: 132, text: "Are you rich/poor" },
-                    { num: 133, text: "Where do you stand in the wealth class (lower class, middle class, upper class)" },
-                    { num: 134, text: "How big is your house" },
-                    { num: 135, text: "Take a picture of your house" },
-                    { num: 136, text: "How much do your parents make" },
-                    { num: 137, text: "Do your parents struggle with debt" },
-                    { num: 138, text: "Do you own a pool (above-ground/below-ground)" },
-                    { num: 139, text: "Do you live in a gated neighborhood" },
-                    { num: 140, text: "Do you have expensive stuff" },
-                    { num: 141, text: "How big is your room" },
-                    { num: 142, text: "What kind of school do you go to" }
-                ]
-            },
-            "Misc": {
-                emoji: "🌈",
-                color: "from-purple-400 to-indigo-400",
-                questions: [
-                    { num: 143, text: "Send a selfie" },
-                    { num: 144, text: "Do whatever I say (no saying no)" },
-                    { num: 145, text: "DM me" },
-                    { num: 146, text: "Ask whatever you want (I can't say no)" }
+
+        // All questions from the image (exact text preserved)
+        const gameData = {
+            categories: {
+                "The Basics": [
+                    { id: 1, text: "Age" },
+                    { id: 2, text: "Gender" },
+                    { id: 3, text: "Height" },
+                    { id: 4, text: "Weight" },
+                    { id: 5, text: "Where are you from" },
+                    { id: 6, text: "Zodiac Sign" },
+                    { id: 7, text: "First Name" },
+                    { id: 8, text: "Last Name" },
+                    { id: 9, text: "Middle Name" },
+                    { id: 10, text: "Birthday" },
+                    { id: 11, text: "Main Language(s)" }
+                ],
+                "Hobbies/Favourite Things": [
+                    { id: 12, text: "Favorite Color" },
+                    { id: 13, text: "Favorite Food" },
+                    { id: 14, text: "Favorite Activity" },
+                    { id: 15, text: "Favorite Music genre" },
+                    { id: 16, text: "Favorite Artist" },
+                    { id: 17, text: "Favorite Song" },
+                    { id: 18, text: "Favorite Movie" },
+                    { id: 19, text: "Favorite Video Game (if any)" },
+                    { id: 20, text: "Favorite TV show" },
+                    { id: 21, text: "Do you play any sports" },
+                    { id: 22, text: "Last thing you did" }
+                ],
+                "Life/Experiences": [
+                    { id: 23, text: "Do you currently have a job" },
+                    { id: 24, text: "Future Job/Career/Ambitions" },
+                    { id: 25, text: "Have you drank/smoked anything" },
+                    { id: 26, text: "Have you done drugs" },
+                    { id: 27, text: "Do you have any pets" },
+                    { id: 28, text: "Most Favorable Memory" },
+                    { id: 29, text: "Most embarrassing moment" },
+                    { id: 30, text: "Dream Vacation" },
+                    { id: 31, text: "How many Family members" },
+                    { id: 32, text: "How many friends" },
+                    { id: 33, text: "Do you plan on going to college/university" }
+                ],
+                "Social Media": [
+                    { id: 34, text: "Do you use any other social media" },
+                    { id: 35, text: "Who do you follow" },
+                    { id: 36, text: "Have you ever had an internet argument" },
+                    { id: 37, text: "Most used Social Media app" },
+                    { id: 38, text: "What's your username on each app" },
+                    { id: 39, text: "Have you met any friends online" },
+                    { id: 40, text: "Do you follow any NSFW accounts/pages" },
+                    { id: 41, text: "Last Person you DM'd/followed" },
+                    { id: 42, text: "What was the last message you sent" },
+                    { id: 43, text: "How many followers/friends on social media" },
+                    { id: 44, text: "Amount of time you use social media" }
+                ],
+                "Personal Belongings": [
+                    { id: 45, text: "Most expensive thing you own" },
+                    { id: 46, text: "Do you own anything above $1,000" },
+                    { id: 47, text: "Most prized possession" },
+                    { id: 48, text: "Do you own anything embarrassing" },
+                    { id: 49, text: "Weirdest thing you own" },
+                    { id: 50, text: "Do you own anything popular" },
+                    { id: 51, text: "Do you own anything considered \"rich\"" },
+                    { id: 52, text: "Do you own anything futuristic" },
+                    { id: 53, text: "Coolest thing you own" },
+                    { id: 54, text: "Oldest thing you own" },
+                    { id: 55, text: "What did you buy/get recently" }
+                ],
+                "Looks/Appearance": [
+                    { id: 66, text: "Hair Style" },
+                    { id: 67, text: "Hair Length" },
+                    { id: 68, text: "Hair Color" },
+                    { id: 69, text: "Nice" },
+                    { id: 70, text: "Body Style" },
+                    { id: 71, text: "Ethnicity" },
+                    { id: 72, text: "What are you wearing" },
+                    { id: 73, text: "Eye Color" },
+                    { id: 74, text: "Are you wearing makeup" },
+                    { id: 75, text: "Type of Underwear you wear" },
+                    { id: 76, text: "Favorite outfit" },
+                    { id: 77, text: "Facial/Body Hair" }
+                ],
+                "Relationships": [
+                    { id: 78, text: "Sexuality" },
+                    { id: 79, text: "Relationship Status" },
+                    { id: 80, text: "Who is your crush" },
+                    { id: 81, text: "Celebrity Crush" },
+                    { id: 82, text: "Have you ever cheated on someone" },
+                    { id: 83, text: "Ideal Girlfriend/Boyfriend" },
+                    { id: 84, text: "Idea of Perfect Date" },
+                    { id: 85, text: "Have you asked someone out" },
+                    { id: 86, text: "What do you hope in a relationship" },
+                    { id: 87, text: "Are you interested in anyone" },
+                    { id: 88, text: "Do you real life/online date" }
+                ],
+                "Sex/Sexuality": [
+                    { id: 89, text: "Are you a virgin" },
+                    { id: 90, text: "Have you ever seen anyone naked" },
+                    { id: 91, text: "Do you have piercing/tattoos" },
+                    { id: 92, text: "Have you ever had same-sex experience" },
+                    { id: 93, text: "Have you ever sent a nude" },
+                    { id: 94, text: "Have you ever sexted" },
+                    { id: 95, text: "Have you ever kissed anyone" },
+                    { id: 96, text: "Am I attractive" },
+                    { id: 97, text: "Have you ever slept together" },
+                    { id: 98, text: "Do you want to have sex" },
+                    { id: 99, text: "Are you straight, bi, gay/lesbian, pan, etc." }
+                ],
+                "Sexual": [
+                    { id: 100, text: "Bra/Dick size" },
+                    { id: 101, text: "Public Hair: Natural, trimmed, shaved, none" },
+                    { id: 102, text: "Do you have any body hair" },
+                    { id: 103, text: "(Guys Only) Are you Circumcised" },
+                    { id: 104, text: "How often you Masturbate" },
+                    { id: 105, text: "Have you ever watched porn" },
+                    { id: 106, text: "Ideal Sexual/Physical attributes" },
+                    { id: 107, text: "Favorite Sexual Fantasy" },
+                    { id: 108, text: "Turn Ons/Turn Offs" },
+                    { id: 109, text: "Any Kinks" },
+                    { id: 110, text: "Ideal Sexual Position" },
+                    { id: 111, text: "How do you masturbate" },
+                    { id: 112, text: "Do you own a toy" },
+                    { id: 113, text: "Have you ever been caught Masturbating" },
+                    { id: 114, text: "Have you ever walked in when someone was having sex" },
+                    { id: 115, text: "Biggest fears of Sex" },
+                    { id: 116, text: "Do you have any STDs" },
+                    { id: 117, text: "How often are you horny" },
+                    { id: 118, text: "Most embarrassing sexual story" },
+                    { id: 119, text: "Are you currently horny" },
+                    { id: 120, text: "What do you expect in a sexual relationship" }
+                ],
+                "Academic/School": [
+                    { id: 121, text: "Where do you go to school" },
+                    { id: 122, text: "What classes do you take" },
+                    { id: 123, text: "What grade are you in" },
+                    { id: 124, text: "Most favorite teacher" },
+                    { id: 125, text: "Least favorite teachers" },
+                    { id: 126, text: "Highest Grade/Lowest Grade in classes" },
+                    { id: 127, text: "How long is your school day" },
+                    { id: 128, text: "Did you do your homework" },
+                    { id: 129, text: "Do you have any test, quizzes, or exams coming up" },
+                    { id: 130, text: "Last bad grade" },
+                    { id: 131, text: "Last good grade" }
+                ],
+                "Economic Status/Wealth": [
+                    { id: 132, text: "Are you rich/poor" },
+                    { id: 133, text: "Where do you stand in the wealth class (lower class, middle class, upper class)" },
+                    { id: 134, text: "How big is your house" },
+                    { id: 135, text: "Take a picture of your house" },
+                    { id: 136, text: "How much do your parents make" },
+                    { id: 137, text: "Do your parents struggle with debt" },
+                    { id: 138, text: "Do you own a pool (above-ground/below-ground)" },
+                    { id: 139, text: "Do you live in a gated neighborhood" },
+                    { id: 140, text: "Do you have expensive stuff" },
+                    { id: 141, text: "How big is your room" },
+                    { id: 142, text: "What kind of school do you go to" }
+                ],
+                "Misc": [
+                    { id: 143, text: "Send a selfie" },
+                    { id: 144, text: "Do whatever I say (no saying no)" },
+                    { id: 145, text: "DM me" },
+                    { id: 146, text: "Ask whatever you want (I can't say no)" }
                 ]
             }
         }
 
-        // STATE
-        let currentMode = 'single' // 'single' or 'multi'
-        let currentCategoryKey = null
+        // Game state
+        let players = {
+            p1: { name: "Alex", avatar: "👤" },
+            p2: { name: "Jordan", avatar: "👤" }
+        }
+        let currentPicker = "p1"          // "p1" or "p2"
+        let usedQuestions = new Set()
+        let history = []
         let currentQuestion = null
-        let roomCode = null
-        let myName = null
-        let players = []
-        let currentTurnIndex = 0
-        let answersLog = []
+        let currentAnswerer = null
+        let selectedCategoryKey = null
 
-        // Simple confetti for fun answers
-        function launchConfetti() {
-            const colors = ['#ff9ff3', '#00d2ff', '#f7d2ff', '#ffcc00']
-            for (let i = 0; i < 80; i++) {
-                const confetti = document.createElement('div')
-                confetti.style.position = 'fixed'
-                confetti.style.zIndex = '9999'
-                confetti.style.left = Math.random() * 100 + 'vw'
-                confetti.style.top = '-20px'
-                confetti.style.fontSize = '20px'
-                confetti.textContent = ['💖', '✨', '🌟', '🦄'][Math.floor(Math.random() * 4)]
-                document.body.appendChild(confetti)
-                
-                const duration = Math.random() * 3000 + 2000
-                confetti.animate([
-                    { transform: 'translateY(0) rotate(0deg)' },
-                    { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 800}deg)` }
-                ], {
-                    duration: duration,
-                    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)'
-                })
-                
-                setTimeout(() => confetti.remove(), duration)
-            }
-        }
-
-        // Render category cards on home
-        function renderCategories() {
-            const grid = document.getElementById('category-grid')
-            grid.innerHTML = ''
+        // Render category grid on first screen + picker view
+        function renderCategoryGrid(containerId) {
+            const container = document.getElementById(containerId)
+            container.innerHTML = ""
             
-            Object.keys(CATEGORIES).forEach(key => {
-                const cat = CATEGORIES[key]
-                const count = cat.questions.length
+            const colors = {
+                "The Basics": "bg-blue-500",
+                "Hobbies/Favourite Things": "bg-pink-500",
+                "Life/Experiences": "bg-orange-500",
+                "Social Media": "bg-purple-500",
+                "Personal Belongings": "bg-cyan-500",
+                "Looks/Appearance": "bg-violet-500",
+                "Relationships": "bg-emerald-500",
+                "Sex/Sexuality": "bg-red-500",
+                "Sexual": "bg-rose-500",
+                "Academic/School": "bg-amber-500",
+                "Economic Status/Wealth": "bg-lime-500",
+                "Misc": "bg-teal-500"
+            }
+            
+            Object.keys(gameData.categories).forEach(key => {
+                const cat = gameData.categories[key]
+                const color = colors[key] || "bg-pink-500"
                 
                 const cardHTML = `
-                <div onclick="selectCategory('${key}')" 
-                     class="category-card bg-white/5 border border-white/10 hover:border-pink-300 rounded-3xl p-6 cursor-pointer">
-                    <div class="flex justify-between items-start">
-                        <div class="text-5xl">${cat.emoji}</div>
-                        <div class="text-xs bg-white/10 text-white/70 px-3 h-6 rounded-2xl flex items-center font-mono">${count} questions</div>
-                    </div>
-                    <div class="mt-8">
-                        <h3 class="text-2xl font-semibold">${key}</h3>
-                    </div>
-                    <div class="h-2 mt-8 bg-gradient-to-r ${cat.color} rounded-3xl"></div>
+                <div onclick="selectCategory('${key}', '${containerId}')" 
+                     class="category-card cursor-pointer ${color} text-white rounded-3xl p-6 flex flex-col h-full hover:ring-4 hover:ring-offset-4 hover:ring-offset-black hover:ring-white/30">
+                    <div class="text-4xl mb-4">${getEmojiForCategory(key)}</div>
+                    <h3 class="font-bold text-xl title-font">${key}</h3>
+                    <p class="text-white/70 text-sm mt-auto pt-3">${cat.length} questions</p>
                 </div>`
+                container.innerHTML += cardHTML
+            })
+        }
+
+        function getEmojiForCategory(key) {
+            const map = {
+                "The Basics": "📋",
+                "Hobbies/Favourite Things": "🎨",
+                "Life/Experiences": "🌍",
+                "Social Media": "📱",
+                "Personal Belongings": "👜",
+                "Looks/Appearance": "💇‍♀️",
+                "Relationships": "❤️",
+                "Sex/Sexuality": "🔥",
+                "Sexual": "💋",
+                "Academic/School": "📚",
+                "Economic Status/Wealth": "💰",
+                "Misc": "✨"
+            }
+            return map[key] || "❔"
+        }
+
+        function selectCategory(key, containerId) {
+            if (containerId === "picker-category-grid") {
+                // In game mode
+                selectedCategoryKey = key
+                showQuestions(key)
+            } else {
+                // Landing screen click — just visual fun, doesn't start game yet
+                alert(`💕 You chose ${key}!\n\nNow click the big START MULTIPLAYER button to begin the real game!`)
+            }
+        }
+
+        function showQuestions(categoryKey) {
+            document.getElementById("picker-view").classList.add("hidden")
+            const qView = document.getElementById("questions-view")
+            qView.classList.remove("hidden")
+            
+            document.getElementById("selected-category-name").innerHTML = `
+                ${getEmojiForCategory(categoryKey)} ${categoryKey}
+            `
+            
+            const container = document.getElementById("questions-list")
+            container.innerHTML = ""
+            
+            gameData.categories[categoryKey].forEach(q => {
+                if (usedQuestions.has(q.id)) return
                 
-                grid.innerHTML += cardHTML
+                const html = `
+                <div onclick="pickQuestion(${q.id}, '${q.text}', '${categoryKey}')" 
+                     class="question-card cursor-pointer flex items-center gap-4 bg-white/10 hover:bg-white/20 rounded-3xl p-6">
+                    <div class="bg-white/10 text-white font-mono w-10 h-10 rounded-2xl flex items-center justify-center font-bold flex-shrink-0">${q.id}</div>
+                    <p class="text-lg">${q.text}</p>
+                </div>`
+                container.innerHTML += html
             })
-        }
-
-        // Select category → show questions
-        function selectCategory(key) {
-            currentCategoryKey = key
-            const cat = CATEGORIES[key]
             
-            document.getElementById('home-screen').classList.add('hidden')
-            const catScreen = document.getElementById('category-screen')
-            catScreen.classList.remove('hidden')
-            
-            // Header
-            document.getElementById('category-header').innerHTML = `
-                <span class="text-4xl">${cat.emoji}</span>
-                <span>${key}</span>
-                <span class="text-white/40 text-sm ml-auto">(${cat.questions.length} questions)</span>
-            `
-            // Questions list
-            const listEl = document.getElementById('questions-list')
-            listEl.innerHTML = cat.questions.map(q => `
-                <div onclick="openQuestion(${q.num}, '${q.text}', '${key}')" 
-                     class="question-card flex items-center gap-x-6 bg-white/5 border border-white/10 rounded-3xl px-8 py-6 cursor-pointer">
-                    <div class="w-14 h-14 flex-shrink-0 bg-gradient-to-br from-pink-400 to-purple-400 text-white rounded-2xl flex items-center justify-center text-4xl font-bold title-font">
-                        ${q.num}
-                    </div>
-                    <p class="text-lg leading-tight flex-1">${q.text}</p>
-                    <div class="text-4xl opacity-30">→</div>
-                </div>
-            `).join('')
-        }
-
-        function goBackToHome() {
-            document.getElementById('category-screen').classList.add('hidden')
-            document.getElementById('home-screen').classList.remove('hidden')
-            currentCategoryKey = null
-            // Also hide multi header if visible
-            document.getElementById('multi-game-header').classList.add('hidden')
-        }
-
-        // Open question modal
-        function openQuestion(num, text, categoryKey) {
-            currentQuestion = { num, text, categoryKey }
-            
-            const modal = document.getElementById('question-modal')
-            modal.classList.remove('hidden')
-            modal.classList.add('flex')
-            
-            document.getElementById('modal-number').textContent = num
-            document.getElementById('modal-question').textContent = text
-            document.getElementById('answer-input').value = ''
-            
-            // Show current player info if in multiplayer
-            const infoEl = document.getElementById('modal-player-info')
-            if (currentMode === 'multi' && players.length > 0) {
-                const currentPlayer = players[currentTurnIndex % players.length]
-                infoEl.innerHTML = `It's <span class="text-pink-400">${currentPlayer}</span>'s turn to answer!`
-            } else {
-                infoEl.textContent = 'Just you and the question 💕'
+            if (container.innerHTML === "") {
+                container.innerHTML = `<div class="text-center py-12 text-zinc-400">All questions in this category have been asked! Choose another 💕</div>`
             }
         }
 
-        function hideQuestionModal() {
-            const modal = document.getElementById('question-modal')
-            modal.classList.add('hidden')
-            modal.classList.remove('flex')
-            currentQuestion = null
+        function backToCategories() {
+            document.getElementById("questions-view").classList.add("hidden")
+            document.getElementById("picker-view").classList.remove("hidden")
         }
 
-        // Submit answer (works in both modes)
+        function pickQuestion(id, text, categoryKey) {
+            currentQuestion = { id, text }
+            usedQuestions.add(id)
+            
+            // Hide question list
+            document.getElementById("questions-view").classList.add("hidden")
+            
+            // Show answer view
+            const answerView = document.getElementById("answer-view")
+            answerView.classList.remove("hidden")
+            
+            // Fill data
+            document.getElementById("question-number-badge").textContent = `#${id}`
+            document.getElementById("current-question-text").textContent = text
+            
+            // Who is answering?
+            currentAnswerer = currentPicker === "p1" ? "p2" : "p1"
+            const answererName = players[currentAnswerer].name
+            document.getElementById("answerer-avatar").innerHTML = players[currentAnswerer].avatar
+            
+            // Prompt
+            document.getElementById("answer-prompt").innerHTML = `
+                ${players[currentAnswerer].avatar} <span class="font-bold">${answererName}</span>, your turn to answer!
+            `
+            
+            // Reset input
+            document.getElementById("answer-input").value = ""
+            document.getElementById("answer-revealed").classList.add("hidden")
+            document.getElementById("answer-input-area").classList.remove("hidden")
+        }
+
         function submitAnswer() {
-            const answerText = document.getElementById('answer-input').value.trim()
-            
-            if (!answerText) {
-                showToast("Don't be shy! Type something cute 💕", 2000)
+            const input = document.getElementById("answer-input").value.trim()
+            if (!input) {
+                alert("✨ Say something cute or honest!")
                 return
             }
             
-            // Save locally
-            const savedAnswers = JSON.parse(localStorage.getItem('numberGameAnswers') || '{}')
-            const key = `${currentQuestion.categoryKey}-${currentQuestion.num}`
-            savedAnswers[key] = {
-                question: currentQuestion.text,
-                answer: answerText,
-                timestamp: Date.now()
-            }
-            localStorage.setItem('numberGameAnswers', JSON.stringify(savedAnswers))
+            const answererName = players[currentAnswerer].name
             
-            // Confetti!
-            launchConfetti()
-            
-            showToast(`Truth saved! 💖 You said: ${answerText.substring(0, 25)}...`, 3000)
-            
-            // If multiplayer → log the answer and move to next player
-            if (currentMode === 'multi' && roomCode) {
-                answersLog.push({
-                    player: players[currentTurnIndex % players.length],
-                    question: `${currentQuestion.num}. ${currentQuestion.text}`,
-                    answer: answerText
-                })
-                currentTurnIndex++
-                hideQuestionModal()
-                updateMultiGameUI()
-            } else {
-                hideQuestionModal()
-            }
-        }
-
-        // MULTIPLAYER FUNCTIONS
-        function toggleMode() {
-            if (currentMode === 'single') {
-                currentMode = 'multi'
-                document.getElementById('single-pill').classList.remove('bg-white', 'text-[#0f0f1e]')
-                document.getElementById('multi-pill').classList.add('bg-white', 'text-[#0f0f1e]')
-                showMultiplayerScreen()
-            } else {
-                currentMode = 'single'
-                document.getElementById('multi-pill').classList.remove('bg-white', 'text-[#0f0f1e]')
-                document.getElementById('single-pill').classList.add('bg-white', 'text-[#0f0f1e]')
-                document.getElementById('multiplayer-screen').classList.add('hidden')
-                document.getElementById('home-screen').classList.remove('hidden')
-            }
-        }
-
-        function showMultiplayerScreen() {
-            document.getElementById('home-screen').classList.add('hidden')
-            document.getElementById('category-screen').classList.add('hidden')
-            document.getElementById('multiplayer-screen').classList.remove('hidden')
-            document.getElementById('room-lobby').classList.add('hidden')
-            roomCode = null
-            players = []
-        }
-
-        function createRoom() {
-            myName = prompt("What's your name cutie? 🥰", "Player1") || "Anon"
-            roomCode = Math.random().toString(36).substring(2, 8).toUpperCase()
-            
-            players = [myName]
-            document.getElementById('room-lobby').classList.remove('hidden')
-            document.getElementById('room-code-display').innerHTML = `<span class="text-4xl">${roomCode}</span>`
-            updatePlayersList()
-            
-            showToast(`Room ${roomCode} created! Share this code with friends 💌`, 4000)
-        }
-
-        function joinRoomPrompt() {
-            const code = document.getElementById('join-code-input').value.trim().toUpperCase()
-            if (!code || code.length < 4) {
-                showToast("Oops! Enter a valid 4-6 letter code ✨", 2500)
-                return
-            }
-            myName = prompt("What's your name cutie? 🥰", "Player2") || "Anon"
-            roomCode = code
-            players = [myName] // simulate other players already in room
-            // Add a fake player to demo
-            if (players.length === 1) players.unshift("Friend1")
-            
-            document.getElementById('room-lobby').classList.remove('hidden')
-            document.getElementById('room-code-display').innerHTML = `<span class="text-4xl">${roomCode}</span>`
-            updatePlayersList()
-            
-            showToast(`Joined room ${roomCode}! Welcome 💖`, 2500)
-        }
-
-        function updatePlayersList() {
-            const container = document.getElementById('players-list')
-            container.innerHTML = players.map((p, i) => `
-                <div class="px-5 py-2 bg-white/10 rounded-3xl text-sm flex items-center gap-x-2">
-                    <span class="text-xl">${i === 0 ? '👑' : '👤'}</span>
-                    ${p}
-                </div>
-            `).join('')
-        }
-
-        function copyRoomCode() {
-            navigator.clipboard.writeText(roomCode).then(() => {
-                showToast("Code copied! Send it to your friends 💌", 2000)
-            })
-        }
-
-        function leaveRoom() {
-            roomCode = null
-            players = []
-            document.getElementById('room-lobby').classList.add('hidden')
-            showToast("You left the room 💔", 2000)
-        }
-
-        function startMultiplayerGame() {
-            if (players.length < 2) {
-                showToast("Need at least 2 players to start the fun! Invite someone ✨", 3000)
-                return
-            }
-            
-            // Hide lobby, go back to home but now in multi mode
-            document.getElementById('multiplayer-screen').classList.add('hidden')
-            document.getElementById('home-screen').classList.remove('hidden')
-            document.getElementById('multi-game-header').classList.remove('hidden')
-            
-            // Reset turn
-            currentTurnIndex = 0
-            answersLog = []
-            updateMultiGameUI()
-            
-            showToast("Game started! Pick a category together 🎉", 2500)
-        }
-
-        function updateMultiGameUI() {
-            const playerName = players[currentTurnIndex % players.length]
-            document.getElementById('current-turn').innerHTML = `
-                <span class="text-pink-400">${playerName}</span> • pick a category and question
+            // Reveal the answer
+            document.getElementById("revealed-answer-text").innerHTML = `
+                <span class="font-medium">${answererName}:</span> ${input}
             `
-            document.getElementById('current-room-code-small').textContent = roomCode
-        }
-
-        function endMultiplayerGame() {
-            document.getElementById('multi-game-header').classList.add('hidden')
-            currentMode = 'single'
-            document.getElementById('multi-pill').classList.remove('bg-white', 'text-[#0f0f1e]')
-            document.getElementById('single-pill').classList.add('bg-white', 'text-[#0f0f1e]')
+            document.getElementById("answer-input-area").classList.add("hidden")
+            document.getElementById("answer-revealed").classList.remove("hidden")
             
-            // Show answers summary
-            if (answersLog.length > 0) {
-                let summary = `<div class="max-w-md mx-auto mt-12"><h3 class="text-2xl mb-6">Game highlights 💕</h3>`
-                answersLog.forEach(log => {
-                    summary += `<div class="mb-6"><span class="font-medium">${log.player}:</span><br><span class="text-pink-300">${log.question}</span><br><span class="text-white/80">"${log.answer}"</span></div>`
-                })
-                summary += `</div>`
-                document.getElementById('home-screen').innerHTML += summary
-            }
-            
-            showToast("Game ended! Thanks for playing together 🥰", 4000)
-            setTimeout(() => location.reload(), 4200)
-        }
-
-        function showHelp() {
-            const helpText = `🎲 The Number Game V2\n\n` +
-                `1. Pick a category\n` +
-                `2. Choose any number → answer honestly\n` +
-                `3. In Multiplayer: Create or join a room → pick questions together → pass the device or answer in turns!\n\n` +
-                `Made extra cute just for you 💖\n\nDeploy this file to GitHub Pages and play instantly!`
-            alert(helpText)
-        }
-
-        function showToast(message, timeout = 2500) {
-            const toast = document.getElementById('toast')
-            toast.textContent = message
-            toast.classList.remove('hidden')
-            toast.style.display = 'flex'
-            
-            setTimeout(() => {
-                toast.classList.add('hidden')
-                toast.style.display = 'none'
-            }, timeout)
-        }
-
-        // INIT
-        function initializeGame() {
-            initTailwind()
-            renderCategories()
-            
-            console.log('%c✅ The Number Game V2 loaded! Minimal, cute & ready for multiplayer chaos 💖', 'color:#ff9ff3; font-family:Comic Neue; font-size:13px')
-            
-            // Bonus: keyboard shortcut for fun
-            document.addEventListener('keydown', (e) => {
-                if (e.metaKey && e.key === "k") {
-                    e.preventDefault()
-                    launchConfetti()
-                    showToast("Surprise confetti for being awesome! ✨", 1500)
-                }
+            // Save to history
+            history.unshift({
+                id: currentQuestion.id,
+                question: currentQuestion.text,
+                answer: input,
+                picker: players[currentPicker].name,
+                answerer: answererName
             })
+            
+            // Render history
+            renderHistory()
+            
+            // Tiny confetti
+            launchConfetti()
         }
 
-        // Start the app
-        window.onload = initializeGame
+        function launchConfetti() {
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement("div")
+                    confetti.className = "confetti"
+                    confetti.style.left = Math.random() * 100 + "vw"
+                    confetti.style.backgroundColor = ["#ff69b4", "#c026d3", "#a78bfa", "#67e8f9"][Math.floor(Math.random()*4)]
+                    confetti.style.transform = `rotate(${Math.random()*360}deg)`
+                    document.body.appendChild(confetti)
+                    
+                    const duration = Math.random() * 3000 + 2000
+                    confetti.animate([
+                        { transform: `translateY(-100vh) rotate(0deg)` },
+                        { transform: `translateY(100vh) rotate(720deg)` }
+                    ], {
+                        duration: duration,
+                        easing: "linear"
+                    })
+                    
+                    setTimeout(() => confetti.remove(), duration)
+                }, i * 3)
+            }
+        }
+
+        function nextTurn() {
+            // Switch picker
+            currentPicker = currentPicker === "p1" ? "p2" : "p1"
+            
+            // Reset views
+            document.getElementById("answer-view").classList.add("hidden")
+            document.getElementById("picker-view").classList.remove("hidden")
+            
+            // Update header
+            updateTurnHeader()
+            
+            // Re-render categories for new picker (hide used ones automatically)
+            renderPickerCategories()
+        }
+
+        function renderPickerCategories() {
+            const container = document.getElementById("picker-category-grid")
+            container.innerHTML = ""
+            renderCategoryGrid("picker-category-grid")
+        }
+
+        function updateTurnHeader() {
+            const picker = players[currentPicker]
+            const answerer = currentPicker === "p1" ? players.p2 : players.p1
+            
+            document.getElementById("current-avatar").innerHTML = picker.avatar
+            document.getElementById("turn-text").innerHTML = `
+                ${picker.name}'s turn to pick
+            `
+            document.getElementById("role-text").innerHTML = `
+                Ask a question for <span class="font-semibold text-purple-300">${answerer.name}</span> to answer 💌
+            `
+            document.getElementById("picker-name-display").textContent = answerer.name
+        }
+
+        function renderHistory() {
+            const log = document.getElementById("history-log")
+            log.innerHTML = ""
+            
+            history.forEach((entry, i) => {
+                const div = document.createElement("div")
+                div.className = "bg-white/5 rounded-3xl p-4 flex gap-4 text-sm"
+                div.innerHTML = `
+                    <div class="font-mono text-pink-300 w-6">#${entry.id}</div>
+                    <div class="flex-1">
+                        <div class="text-white/70">${entry.question}</div>
+                        <div class="mt-2 text-purple-200">${entry.answerer} said: <span class="font-medium">${entry.answer}</span></div>
+                    </div>
+                `
+                log.prepend(div)
+            })
+            
+            if (history.length === 0) {
+                log.innerHTML = `<div class="text-zinc-500 text-center py-8">No rounds yet... the tea is about to spill! ☕</div>`
+            }
+        }
+
+        // Start the full multiplayer flow
+        function startMultiplayerSetup() {
+            document.getElementById("landing-screen").classList.add("hidden")
+            document.getElementById("setup-screen").classList.remove("hidden")
+        }
+
+        function cancelSetup() {
+            document.getElementById("setup-screen").classList.add("hidden")
+            document.getElementById("landing-screen").classList.remove("hidden")
+        }
+
+        function startGame() {
+            // Get names
+            const p1Name = document.getElementById("player1-name").value.trim() || "Player 1"
+            const p2Name = document.getElementById("player2-name").value.trim() || "Player 2"
+            
+            players.p1.name = p1Name
+            players.p2.name = p2Name
+            
+            // Show player bar
+            document.getElementById("player-info").classList.remove("hidden")
+            document.getElementById("p1-name").textContent = p1Name
+            document.getElementById("p2-name").textContent = p2Name
+            
+            // Switch to game screen
+            document.getElementById("setup-screen").classList.add("hidden")
+            document.getElementById("game-screen").classList.remove("hidden")
+            
+            // Start with Player 1 picking
+            currentPicker = "p1"
+            usedQuestions.clear()
+            history = []
+            
+            updateTurnHeader()
+            renderPickerCategories()
+            renderHistory()
+        }
+
+        function endGame() {
+            if (confirm("End this cute game? 💔")) {
+                // Reset everything
+                location.reload()
+            }
+        }
+
+        function toggleHowToPlay() {
+            const modal = document.getElementById("how-modal")
+            modal.classList.toggle("hidden")
+        }
+
+        // Boot the app
+        function boot() {
+            initTailwind()
+            renderCategoryGrid("category-grid")
+            console.log('%cThe Number Game V2 ready to deploy on GitHub Pages! 💕', 'background:#ff69b4;color:white;padding:4px 8px;border-radius:9999px')
+        }
+        
+        window.onload = boot
     </script>
 </body>
 </html>
